@@ -1,6 +1,6 @@
 import React, {FC} from "react";
 import {Recipe} from "../utils/recipeTypes";
-import {Grid, Typography} from "@mui/material";
+import {Box, Grid, Typography} from "@mui/material";
 
 
 type RecipeDisplayProps = {
@@ -26,11 +26,11 @@ const RecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
         maxHeight: '100%',
         borderRadius: '8px'
       }} />
-      <Typography sx={{fontWeight: 500, fontSize: '18px', padding: 1, position: 'relative'}}>
+      <Box sx={{fontWeight: 500, fontSize: '18px', padding: 1, position: 'relative'}}>
         <div style={{backgroundColor: '#d17a22', borderRadius: '8px', width: 'fit-content', padding: '4px 8px', color: 'white'}}>
           {recipe.category}
         </div>
-      </Typography>
+      </Box>
       <Typography sx={{fontWeight: 700, fontSize: '24px', padding: 1, marginBottom: 1}}>
         {recipe.title}
       </Typography>
