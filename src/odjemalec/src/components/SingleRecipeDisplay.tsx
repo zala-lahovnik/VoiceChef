@@ -46,17 +46,37 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
         }
       }
 
-      if (finalTranscript.includes('next')) {
-        handleNext();
-      } else if (finalTranscript.includes('back')) {
-        handlePrevious();
-      } else if (finalTranscript.includes('again')) {
-        readCurrentStep()
-      }
+      handleCommand(finalTranscript.toLowerCase());
+
+      //
+      // if (finalTranscript.includes('next')) {
+      //   handleNext();
+      // } else if (finalTranscript.includes('back')) {
+      //   handlePrevious();
+      // } else if (finalTranscript.includes('again')) {
+      //   readCurrentStep()
+      // }
     };
 
     setRecognition(recognition);
   }, []);
+
+  const handleCommand = (command: string) => {
+    if (command.includes('next')) {
+      handleNext();
+    } else if (command.includes('back')) {
+      handlePrevious();
+    } else if (command.includes('again')) {
+      readCurrentStep();
+    } else if (command.includes('set timer')) {
+      const time = extractTime(command);
+      if (time) {
+        setTimer(time);
+      } else {
+        console.log('Invalid time format');
+      }
+    }
+  };
 
   const readCurrentStep = () => {
     speakText(recipe.steps[currentStep].text);
@@ -98,6 +118,27 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
     const utterance = new SpeechSynthesisUtterance(text);
     window.speechSynthesis.speak(utterance);
   };
+
+  const extractTime = (command:string) => {
+    // Implement logic to parse the time duration from the user's input
+    // For example, you can use regular expressions or natural language processing
+    // This is a simplified example, assuming the user provides the time duration in minutes
+    const match = command.match(/\b\d+\b/);
+    if (match) {
+      return parseInt(match[0], 10) * 60000; // Convert minutes to milliseconds
+    }
+    return null;
+  };
+
+  const setTimer = (duration: number) => {
+    console.log(`Timer set for ${duration / 60000} minutes`);
+    setTimeout(() => {
+      console.log('Timer expired!');
+      alert('Timer done')
+      // Add logic to perform actions when the timer expires
+    }, duration);
+  };
+
 
 
   return (
