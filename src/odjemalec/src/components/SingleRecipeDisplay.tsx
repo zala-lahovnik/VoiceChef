@@ -158,7 +158,7 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
         </Typography>
         {recipe.steps.map((step) => {
           return (
-            <Grid container style={{fontSize: '18px', display: 'flex', flexDirection: 'row', marginBottom: '8px'}}>
+            <Grid container key={recipe.title + step.step} style={{fontSize: '18px', display: 'flex', flexDirection: 'row', marginBottom: '8px'}}>
               <Grid item style={{display: 'flex', flexDirection: 'row'}}>
                 <div style={{
                   marginRight: '8px',

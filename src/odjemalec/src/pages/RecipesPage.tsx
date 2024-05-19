@@ -16,8 +16,6 @@ const RecipesPage:FC<RecipesPageProps> = () => {
   const fetchRecipes = async () => {
     const result = await voiceChefApi.get('/recipes');
 
-    console.log('result', result)
-
     const recipes = result.data
 
     setRecipes(recipes)
@@ -55,7 +53,7 @@ const RecipesPage:FC<RecipesPageProps> = () => {
         }}>
           {recipes && recipes.map((recipe) => {
             return (
-              <Grid item xs={12} sm={12} md={4} lg={2} onClick={() => { handleOnClickOnRecipe(recipe._id) }}>
+              <Grid key={recipe._id} item xs={12} sm={12} md={4} lg={2} onClick={() => { handleOnClickOnRecipe(recipe._id) }}>
                 <RecipeDisplay recipe={recipe} />
               </Grid>
             )
