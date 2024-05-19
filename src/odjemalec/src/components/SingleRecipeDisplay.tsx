@@ -16,6 +16,8 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
   const [currentStep, setCurrentStep] = useState(0)
 
   useEffect(() => {
+    Notification.requestPermission();
+
     if (!('webkitSpeechRecognition' in window)) {
       console.log('Browser does not support speech recognition.');
       return;
@@ -47,15 +49,6 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
       }
 
       handleCommand(finalTranscript.toLowerCase());
-
-      //
-      // if (finalTranscript.includes('next')) {
-      //   handleNext();
-      // } else if (finalTranscript.includes('back')) {
-      //   handlePrevious();
-      // } else if (finalTranscript.includes('again')) {
-      //   readCurrentStep()
-      // }
     };
 
     setRecognition(recognition);
@@ -120,9 +113,6 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
   };
 
   const extractTime = (command:string) => {
-    // Implement logic to parse the time duration from the user's input
-    // For example, you can use regular expressions or natural language processing
-    // This is a simplified example, assuming the user provides the time duration in minutes
     const match = command.match(/\b\d+\b/);
     if (match) {
       return parseInt(match[0], 10) * 60000; // Convert minutes to milliseconds
@@ -133,9 +123,9 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
   const setTimer = (duration: number) => {
     console.log(`Timer set for ${duration / 60000} minutes`);
     setTimeout(() => {
-      console.log('Timer expired!');
-      alert('Timer done')
-      // Add logic to perform actions when the timer expires
+      if (Notification.permission === 'granted') {
+        new Notification("Timer expired!", { body: `Your timer for ${duration / 60000} minutes has expired!` });
+      }
     }, duration);
   };
 
