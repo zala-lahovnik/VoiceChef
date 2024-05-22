@@ -43,7 +43,8 @@ app.get('/', (req, res) => {
 });
 
 // Zaščitene poti
-app.use('/recipes', checkJwt, recipeRoute);
+app.use('/recipes', recipeRoute);
+// app.use('/recipes', checkJwt, recipeRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
