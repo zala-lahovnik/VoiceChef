@@ -48,20 +48,20 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div>
-        {isAuthenticated && <Logout />} {/* Pokaži gumb za odjavo, če je uporabnik avtenticiran */}
+      {/*<div>*/}
+        {/*{isAuthenticated && <Logout />} /!* Pokaži gumb za odjavo, če je uporabnik avtenticiran *!/*/}
         <Routes>
-          <Route path="/" element={isAuthenticated ? <RecipesPage /> : <Login />} />
-          <Route path="/recipe/:id" element={isAuthenticated ? <SingleRecipePage /> : <Navigate to="/" />} />
+          <Route path="/" element={<RecipesPage />} />
+          <Route path="/recipe/:id" element={<SingleRecipePage />} />
         </Routes>
-        <div>
-          <h3>Debug Info:</h3>
-          <p>isLoading: {isLoading.toString()}</p>
-          <p>isAuthenticated: {isAuthenticated.toString()}</p>
-          <p>Access Token: {accessToken}</p>
-          <p>User: {user ? JSON.stringify(user) : 'No user'}</p>
-        </div>
-      </div>
+        {/*<div>*/}
+        {/*  <h3>Debug Info:</h3>*/}
+        {/*  <p>isLoading: {isLoading.toString()}</p>*/}
+        {/*  <p>isAuthenticated: {isAuthenticated.toString()}</p>*/}
+        {/*  <p>Access Token: {accessToken}</p>*/}
+        {/*  <p>User: {user ? JSON.stringify(user) : 'No user'}</p>*/}
+        {/*</div>*/}
+      {/*</div>*/}
     </Router>
   );
 };

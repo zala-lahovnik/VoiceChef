@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {Recipe} from "../utils/recipeTypes";
+import {Recipe} from "../../utils/recipeTypes";
 import {Box, Grid, Typography} from "@mui/material";
 
 

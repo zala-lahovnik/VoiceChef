@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from "react";
-import {Recipe} from "../utils/recipeTypes";
+import {Recipe} from "../../utils/recipeTypes";
 import {Grid, Typography} from "@mui/material";
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
