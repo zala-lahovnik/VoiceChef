@@ -13,9 +13,10 @@ export const voiceChefApi = Axios.create({
 // Dodamo interceptor za dodajanje dostopnega žetona v glavo vsake zahteve
 voiceChefApi.interceptors.request.use(
   async (config) => {
-    const token = localStorage.getItem('accessToken');
+    const token = sessionStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('Authorization header set:', config.headers.Authorization);
     }
     return config;
   },
@@ -23,3 +24,5 @@ voiceChefApi.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+export default voiceChefApi;

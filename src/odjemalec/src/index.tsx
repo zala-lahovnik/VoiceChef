@@ -8,6 +8,10 @@ import { Auth0Provider } from '@auth0/auth0-react';
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN!;
 const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID!;
+const audience = process.env.REACT_APP_AUTH0_AUDIENCE!;
+const redirectUri = window.location.origin;
+
+console.log('Auth0Provider Config:', { domain, clientId, redirectUri, audience });
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -17,19 +21,16 @@ root.render(
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{ redirect_uri: window.location.origin }}
+      authorizationParams={{
+        redirect_uri: redirectUri,
+        audience: audience,
+        scope: 'openid profile email read:users update:users delete:users create:users read:messages',
+      }}
     >
       <App />
     </Auth0Provider>
   </React.StrictMode>
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://cra.link/PWA
 serviceWorkerRegistration.register();
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
