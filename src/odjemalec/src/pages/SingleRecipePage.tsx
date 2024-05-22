@@ -4,6 +4,7 @@ import SingleRecipeDisplay from "../components/SingleRecipeDisplay/SingleRecipeD
 import {Recipe} from "../utils/recipeTypes";
 import {voiceChefApi} from "../utils/axios";
 import {Grid} from "@mui/material";
+import SideMenu from "../components/SideMenu/SideMenu";
 
 
 type SingleRecipePageProps = {}
@@ -38,8 +39,20 @@ const SingleRecipePage:FC<SingleRecipePageProps> = () => {
   }, [id])
 
   return (
-    <Grid container>
-      {recipe && <SingleRecipeDisplay recipe={recipe} />}
+    <Grid container sx={{
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      maxHeight: '100%',
+      height: {xs: '50vh', sm: '95vh', md: '100vh'}
+    }}>
+      <Grid item xs={1} sx={{height: '100%'}}>
+        <SideMenu />
+      </Grid>
+      <Grid item xs={11} sx={{overflowY: 'scroll', height: '100%', paddingBottom: 8, paddingTop: 3}}>
+        {recipe && <SingleRecipeDisplay recipe={recipe} />}
+      </Grid>
     </Grid>
   )
 }
