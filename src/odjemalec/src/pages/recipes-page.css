@@ -1,0 +1,9 @@
+#category-select-label:focus, #category-select-label.focused {
+    /* NE DELUJE */
+    color: #fff !important;
+}
+
+#search-bar {
+    /* NE DELUJE */
+    color: #fff !important;
+}
