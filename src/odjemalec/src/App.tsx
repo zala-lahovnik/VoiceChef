@@ -5,7 +5,10 @@ import HomePage from './pages/HomePage';
 import SingleRecipePage from './pages/SingleRecipePage';
 import { useAuth0 } from '@auth0/auth0-react';
 import Login from './components/Login';
-import Logout from './components/Logout'; // Importajte komponento Logout
+import Logout from './components/Logout';
+import RecipesPage from "./pages/RecipesPage";
+import ShoppingListPage from "./pages/ShoppingListPage";
+import ProfilePage from "./pages/ProfilePage"; // Importajte komponento Logout
 
 const App: React.FC = () => {
   const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
@@ -49,9 +52,9 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/recipe/:id" element={<SingleRecipePage />} />
-          <Route path="/recipes" element={<SingleRecipePage />} />
-          <Route path="/shopping-list" element={<SingleRecipePage />} />
-          <Route path="/profile" element={<SingleRecipePage />} />
+          <Route path="/recipes" element={<RecipesPage />} />
+          <Route path="/shopping-list" element={<ShoppingListPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
     </Router>
   );
