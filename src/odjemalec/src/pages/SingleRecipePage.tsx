@@ -51,7 +51,7 @@ const SingleRecipePage:FC<SingleRecipePageProps> = () => {
         <SideMenu />
       </Grid>
       <Grid item xs={11} sx={{overflowY: 'scroll', height: '100%', paddingBottom: 8, paddingTop: 3}}>
-        {recipe && <SingleRecipeDisplay recipe={recipe} />}
+        {recipe && <SingleRecipeDisplay key={recipe._id} recipe={recipe} />}
       </Grid>
     </Grid>
   )
