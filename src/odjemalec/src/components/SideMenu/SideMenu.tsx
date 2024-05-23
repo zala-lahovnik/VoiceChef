@@ -58,8 +58,6 @@ const SideMenu = () => {
             justifyContent: 'center',
             alignItems: 'center',
             borderTopRightRadius: routePath.pathname === '/' ? '16px' : '',
-            paddingTop: 2,
-            paddingBottom: 2,
             backgroundColor: '#1F1D2B'
           }
           }>
@@ -101,8 +99,6 @@ const SideMenu = () => {
             alignItems: 'center',
             borderTopRightRadius: routePath.pathname === '/' ? '16px' : '',
             borderBottomRightRadius: routePath.pathname.includes('/recipe/') ? '16px': '',
-            paddingTop: 2,
-            paddingBottom: 2,
             backgroundColor: '#1F1D2B'
           }
         }>
@@ -143,8 +139,6 @@ const SideMenu = () => {
             justifyContent: 'center',
             alignItems: 'center',
             borderTopRightRadius: routePath.pathname === '/shopping-list' ? '16px' : '',
-            paddingTop: 2,
-            paddingBottom: 2,
             backgroundColor: '#1F1D2B'
           }
         }>
@@ -185,8 +179,6 @@ const SideMenu = () => {
             justifyContent: 'center',
             alignItems: 'center',
             borderTopRightRadius: routePath.pathname.includes('/recipe/') ? '16px' : '',
-            paddingTop: 2,
-            paddingBottom: 2,
             backgroundColor: '#1F1D2B'
           }
         }>
@@ -216,37 +208,76 @@ const SideMenu = () => {
           </Grid>
         </Grid>
 
+        <Grid item xs={12}  sx={routePath.pathname === '/login' ? {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#1F1D2B',
+            marginLeft: routePath.pathname === '/login' ? 0 : 2,
+          } :
+          {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderTopRightRadius: routePath.pathname === '/profile' ? '16px' : '',
+            backgroundColor: '#1F1D2B'
+          }}>
+          <Grid item xs={12} sx={ routePath.pathname === '/login' ? {
+              padding: 2,
+              display: 'flex',
+              marginLeft: 1.5,
+              paddingRight: 3.5,
+              backgroundColor: '#252836',
+              borderTopLeftRadius: '16px',
+              borderBottomLeftRadius: '16px',
+              justifyContent: 'center',
+            }
+            :
+            {
+              padding: 2,
+              backgroundColor: routePath.pathname === '/login' ? '#EA7C69' : '',
+              borderRadius: '8px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }
+          }>
+            {isAuthenticated ?
+              <IconButton sx={{
+                padding: 2,
+                backgroundColor: routePath.pathname === '/profile' ? '#EA7C69' : '',
+                borderRadius: '8px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <LogoutRoundedIcon sx={{color: '#fff', fontSize: '36px'}}/>
+              </IconButton>
+              :
+              <IconButton sx={{
+                padding: 2,
+                backgroundColor: routePath.pathname === '/profile' ? '#EA7C69' : '',
+                borderRadius: '8px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <LoginRoundedIcon sx={{color: '#fff', fontSize: '36px'}}/>
+              </IconButton>
+            }
+          </Grid>
+        </Grid>
+
         <Grid item xs={12}  sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          borderTopRightRadius: routePath.pathname === '/recipes' ? '16px' : '',
+          borderTopRightRadius: routePath.pathname === '/login' ? '16px' : '',
           paddingTop: 2,
           paddingBottom: 2,
           backgroundColor: '#1F1D2B'
         }}>
-          {isAuthenticated ? <IconButton sx={{
-            padding: 2,
-            backgroundColor: routePath.pathname === '/settings' ? '#EA7C69' : '',
-            borderRadius: '8px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <LogoutRoundedIcon sx={{color: '#fff', fontSize: '36px'}}/>
-          </IconButton>
-          :
-          <IconButton sx={{
-            padding: 2,
-            backgroundColor: routePath.pathname === '/settings' ? '#EA7C69' : '',
-            borderRadius: '8px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <LoginRoundedIcon sx={{color: '#fff', fontSize: '36px'}}/>
-          </IconButton>
-        }
+          {/*  EMPTY GRID ITEM TO GET BORDERS ON BOTTOM  DO NOT DELETE! */}
         </Grid>
       </Grid>
     </Grid>
