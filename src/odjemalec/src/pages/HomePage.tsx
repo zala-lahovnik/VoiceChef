@@ -70,7 +70,7 @@ const WhiteSelect = styled(Select)(({ theme }) => ({
 }));
 
 
-const RecipesPage: FC<RecipesPageProps> = () => {
+const HomePage: FC<RecipesPageProps> = () => {
   const [recipes, setRecipes] = useState<Array<Recipe>>([]);
   const [categories, setCategories] = useState<Array<string>>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('--')
@@ -191,4 +191,4 @@ const RecipesPage: FC<RecipesPageProps> = () => {
   );
 };
 
-export default RecipesPage;
+export default HomePage;

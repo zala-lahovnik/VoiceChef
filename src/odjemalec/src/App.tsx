@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import RecipesPage from './pages/RecipesPage';
+import HomePage from './pages/HomePage';
 import SingleRecipePage from './pages/SingleRecipePage';
 import { useAuth0 } from '@auth0/auth0-react';
 import Login from './components/Login';
@@ -30,8 +30,6 @@ const App: React.FC = () => {
 
     if (isAuthenticated) {
       getToken();
-    } else if (!isLoading && !isAuthenticated) {
-      loginWithRedirect();
     }
   }, [isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently]);
 
@@ -48,20 +46,13 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      {/*<div>*/}
-        {/*{isAuthenticated && <Logout />} /!* Pokaži gumb za odjavo, če je uporabnik avtenticiran *!/*/}
         <Routes>
-          <Route path="/" element={<RecipesPage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/recipe/:id" element={<SingleRecipePage />} />
+          <Route path="/recipes" element={<SingleRecipePage />} />
+          <Route path="/shopping-list" element={<SingleRecipePage />} />
+          <Route path="/profile" element={<SingleRecipePage />} />
         </Routes>
-        {/*<div>*/}
-        {/*  <h3>Debug Info:</h3>*/}
-        {/*  <p>isLoading: {isLoading.toString()}</p>*/}
-        {/*  <p>isAuthenticated: {isAuthenticated.toString()}</p>*/}
-        {/*  <p>Access Token: {accessToken}</p>*/}
-        {/*  <p>User: {user ? JSON.stringify(user) : 'No user'}</p>*/}
-        {/*</div>*/}
-      {/*</div>*/}
     </Router>
   );
 };
