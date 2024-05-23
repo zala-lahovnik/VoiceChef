@@ -10,6 +10,7 @@ import RecipesPage from "./pages/RecipesPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
 import ProfilePage from "./pages/ProfilePage"; // Importajte komponento Logout
 import AddRecipe from "./pages/AddRecipe";
+import EditRecipePage from './pages/EditRecipePage';
 
 const App: React.FC = () => {
   const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
@@ -57,6 +58,7 @@ const App: React.FC = () => {
           <Route path="/shopping-list" element={<ShoppingListPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/add-recipe" element={<AddRecipe />} />
+          <Route path="/edit-recipe/:id" element={<EditRecipePage />} />
         </Routes>
     </Router>
   );
