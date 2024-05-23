@@ -1,6 +1,6 @@
 import React from "react";
 import {Grid} from "@mui/material";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
 import IconButton from "@mui/material/IconButton";
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
@@ -13,7 +13,13 @@ import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 
 const SideMenu = () => {
   const routePath = useLocation()
-  const { isAuthenticated } = useAuth0();
+  const navigation = useNavigate()
+  const { isAuthenticated, logout, loginWithRedirect } = useAuth0()
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = window.location.origin;
+  };
 
   return (
     <Grid container sx={{
@@ -81,7 +87,15 @@ const SideMenu = () => {
               alignItems: 'center'
             }
           }>
-            <IconButton sx={{padding: 2, backgroundColor: routePath.pathname === '/' ? '#d17a22' : '', borderRadius: '8px', filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'}}>
+            <IconButton
+              sx={{
+                padding: 2,
+                backgroundColor: routePath.pathname === '/' ? '#d17a22' : '',
+                borderRadius: '8px',
+                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+              }}
+              onClick={() => {navigation('/')}}
+            >
               <HomeRoundedIcon sx={{color: '#fff', fontSize: '36px'}} />
             </IconButton>
           </Grid>
@@ -122,7 +136,15 @@ const SideMenu = () => {
               alignItems: 'center'
             }
           }>
-            <IconButton sx={{padding: 2, backgroundColor: routePath.pathname === 'shopping-list' ? '#d17a22' : '', borderRadius: '8px', filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'}}>
+            <IconButton
+              sx={{
+                padding: 2,
+                backgroundColor: routePath.pathname === 'shopping-list' ? '#d17a22' : '',
+                borderRadius: '8px',
+                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+              }}
+              onClick={() => {navigation('/shopping-list')}}
+            >
               <ChecklistRoundedIcon sx={{color: '#fff', fontSize: '36px'}} />
             </IconButton>
           </Grid>
@@ -162,7 +184,14 @@ const SideMenu = () => {
               alignItems: 'center'
             }
           }>
-            <IconButton sx={{padding: 2, backgroundColor: routePath.pathname.includes('/recipe/') ? '#d17a22' : '', borderRadius: '8px', filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'}}>
+            <IconButton sx={{
+              padding: 2,
+              backgroundColor: (routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes') ? '#d17a22' : '',
+              borderRadius: '8px',
+              filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+              }}
+              onClick={() => {navigation('/recipes')}}
+            >
               <MenuBookRoundedIcon sx={{color: '#fff', fontSize: '36px'}} />
             </IconButton>
           </Grid>
@@ -202,7 +231,14 @@ const SideMenu = () => {
               alignItems: 'center'
             }
           }>
-            <IconButton sx={{padding: 2, backgroundColor: routePath.pathname === '/profile' ? '#d17a22' : '', borderRadius: '8px', filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'}}>
+            <IconButton sx={{
+              padding: 2,
+              backgroundColor: routePath.pathname === '/profile' ? '#d17a22' : '',
+              borderRadius: '8px',
+              filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+              }}
+              onClick={() => {navigation('/profile')}}
+            >
               <ManageAccountsRoundedIcon sx={{color: '#fff', fontSize: '36px'}} />
             </IconButton>
           </Grid>
@@ -250,7 +286,9 @@ const SideMenu = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center'
-              }}>
+              }}
+                onClick={() => {handleLogout()}}
+              >
                 <LogoutRoundedIcon sx={{color: '#fff', fontSize: '36px'}}/>
               </IconButton>
               :
@@ -261,7 +299,9 @@ const SideMenu = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center'
-              }}>
+              }}
+                onClick={() => {loginWithRedirect()}}
+              >
                 <LoginRoundedIcon sx={{color: '#fff', fontSize: '36px'}}/>
               </IconButton>
             }
