@@ -18,7 +18,6 @@ const SideMenu = () => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = window.location.origin;
   };
 
   return (
@@ -64,6 +63,7 @@ const SideMenu = () => {
             justifyContent: 'center',
             alignItems: 'center',
             borderTopRightRadius: routePath.pathname === '/' ? '16px' : '',
+            borderBottomRightRadius: routePath.pathname === '/shopping-list' ? '16px' : '',
             backgroundColor: '#1F1D2B'
           }
           }>
@@ -80,7 +80,7 @@ const SideMenu = () => {
             :
             {
               padding: 2,
-              backgroundColor: routePath.pathname === '/shopping-list' ? '#EA7C69' : '',
+              backgroundColor: routePath.pathname === '/' ? '#EA7C69' : '',
               borderRadius: '8px',
               display: 'flex',
               justifyContent: 'center',
@@ -100,23 +100,23 @@ const SideMenu = () => {
             </IconButton>
           </Grid>
         </Grid>
-        <Grid item xs={12} sx={routePath.pathname === 'shopping-list' ? {
+        <Grid item xs={12} sx={routePath.pathname === '/shopping-list' ? {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#1F1D2B',
-            marginLeft: routePath.pathname === 'shopping-list' ? 0 : 2,
+            marginLeft: routePath.pathname === '/shopping-list' ? 0 : 2,
           } :
           {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             borderTopRightRadius: routePath.pathname === '/' ? '16px' : '',
-            borderBottomRightRadius: routePath.pathname.includes('/recipe/') ? '16px': '',
+            borderBottomRightRadius: routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? '16px': '',
             backgroundColor: '#1F1D2B'
           }
         }>
-          <Grid item xs={12} sx={ routePath.pathname === 'shopping-list' ? {
+          <Grid item xs={12} sx={ routePath.pathname === '/shopping-list' ? {
               padding: 2,
               display: 'flex',
               marginLeft: 1.5,
@@ -129,7 +129,7 @@ const SideMenu = () => {
             :
             {
               padding: 2,
-              backgroundColor: routePath.pathname === 'shopping-list' ? '#EA7C69' : '',
+              backgroundColor: routePath.pathname === '/shopping-list' ? '#EA7C69' : '',
               borderRadius: '8px',
               display: 'flex',
               justifyContent: 'center',
@@ -139,7 +139,7 @@ const SideMenu = () => {
             <IconButton
               sx={{
                 padding: 2,
-                backgroundColor: routePath.pathname === 'shopping-list' ? '#d17a22' : '',
+                backgroundColor: routePath.pathname === '/shopping-list' ? '#d17a22' : '',
                 borderRadius: '8px',
                 filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
               }}
@@ -149,22 +149,23 @@ const SideMenu = () => {
             </IconButton>
           </Grid>
         </Grid>
-        <Grid item xs={12} sx={routePath.pathname.includes('/recipe/') ? {
+        <Grid item xs={12} sx={routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#1F1D2B',
-            marginLeft: routePath.pathname.includes('/recipe/') ? 0 : 2,
+            marginLeft: routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? 0 : 2,
           } :
           {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             borderTopRightRadius: routePath.pathname === '/shopping-list' ? '16px' : '',
+            borderBottomRightRadius: routePath.pathname === '/profile' ? '16px' : '',
             backgroundColor: '#1F1D2B'
           }
         }>
-          <Grid item xs={12} sx={ routePath.pathname.includes('/recipe/') ? {
+          <Grid item xs={12} sx={ routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? {
               padding: 2,
               display: 'flex',
               marginLeft: 1.5,
@@ -177,7 +178,7 @@ const SideMenu = () => {
             :
             {
               padding: 2,
-              backgroundColor: routePath.pathname.includes('/recipe/') ? '#EA7C69' : '',
+              backgroundColor: routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? '#EA7C69' : '',
               borderRadius: '8px',
               display: 'flex',
               justifyContent: 'center',
@@ -207,7 +208,7 @@ const SideMenu = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            borderTopRightRadius: routePath.pathname.includes('/recipe/') ? '16px' : '',
+            borderTopRightRadius: routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? '16px' : '',
             backgroundColor: '#1F1D2B'
           }
         }>
@@ -281,7 +282,7 @@ const SideMenu = () => {
             {isAuthenticated ?
               <IconButton sx={{
                 padding: 2,
-                backgroundColor: routePath.pathname === '/profile' ? '#EA7C69' : '',
+                backgroundColor: routePath.pathname === '/login' ? '#EA7C69' : '',
                 borderRadius: '8px',
                 display: 'flex',
                 justifyContent: 'center',
@@ -294,7 +295,7 @@ const SideMenu = () => {
               :
               <IconButton sx={{
                 padding: 2,
-                backgroundColor: routePath.pathname === '/profile' ? '#EA7C69' : '',
+                backgroundColor: routePath.pathname === '/login' ? '#EA7C69' : '',
                 borderRadius: '8px',
                 display: 'flex',
                 justifyContent: 'center',
