@@ -4,12 +4,11 @@ import voiceChefApi from "../utils/axios";
 import {
   FormControl,
   Grid,
-  InputLabel,
   MenuItem,
-  outlinedInputClasses,
   Select,
-  SelectChangeEvent, styled, TextField,
-  Typography
+  SelectChangeEvent,
+  styled,
+  TextField,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import RecipeDisplay from "../components/RecipeDisplay/RecipeDisplay";
@@ -75,6 +74,7 @@ const HomePage: FC<RecipesPageProps> = () => {
   const [categories, setCategories] = useState<Array<string>>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('--')
   const navigate = useNavigate();
+  const [filteredRecipes, setFilteredRecipes] = useState<Array<Recipe>>(recipes)
 
   const fetchRecipes = async () => {
     try {
@@ -109,6 +109,15 @@ const HomePage: FC<RecipesPageProps> = () => {
   const handleCategoryChange = (event: SelectChangeEvent<unknown>) => {
     setSelectedCategory(event.target.value as string);
   }
+
+  useEffect(() => {
+    let tempFilteredArray = recipes
+    if (selectedCategory !== '--')
+      tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) => filteredRecipe.category === selectedCategory)
+
+    setFilteredRecipes(tempFilteredArray)
+
+  }, [selectedCategory])
 
   return (
     <Grid container sx={{
@@ -177,7 +186,7 @@ const HomePage: FC<RecipesPageProps> = () => {
             columnGap: 2,
             paddingTop: '150px'
           }}>
-            {recipes && recipes.map((recipe) => {
+            {filteredRecipes && filteredRecipes.map((recipe) => {
               return (
                 <Grid key={recipe._id} item xs={12} sm={12} md={4} lg={2} onClick={() => { handleOnClickOnRecipe(recipe._id) }} sx={{cursor: 'pointer'}}>
                   <RecipeDisplay recipe={recipe} />
