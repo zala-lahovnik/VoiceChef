@@ -1,0 +1,27 @@
+.add-recipe-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #2D303E;
+    color: white;
+  }
+  
+  .add-recipe-form {
+    background-color: #393C49;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .add-recipe-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .dynamic-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }  
