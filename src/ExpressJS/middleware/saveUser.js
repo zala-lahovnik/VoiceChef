@@ -16,11 +16,12 @@ const saveUser = async (req, res, next) => {
       });
 
       const { email, name } = userInfo.data;
+      const auth0Id = req.auth.sub; // Pridobivanje auth0Id
 
-      let user = await User.findOne({ email });
+      let user = await User.findOne({ auth0Id });
       if (!user) {
         console.log('User not found in database, creating a new one.'); // Diagnostic log
-        user = new User({ email, name });
+        user = new User({ email, name, auth0Id });
         await user.save();
         console.log('User saved to database.'); // Diagnostic log
       } else {
