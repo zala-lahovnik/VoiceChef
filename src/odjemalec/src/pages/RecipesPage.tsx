@@ -4,6 +4,10 @@ import React, { useEffect, useState } from "react";
 import { Recipe } from "../utils/recipeTypes";
 import voiceChefApi from "../utils/axios";
 import { useNavigate } from "react-router-dom";
+import IconButton from "@mui/material/IconButton";
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const RecipesPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -51,61 +55,79 @@ const RecipesPage = () => {
       <Grid item xs={1} sx={{ height: '100%' }}>
         <SideMenu />
       </Grid>
-      <Grid item xs={11} sx={{ overflowY: 'scroll', height: '100%', paddingBottom: 8, paddingTop: 3, paddingLeft: 2, paddingRight: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
-          <Typography variant="h4" gutterBottom>
-            Recipe List
-          </Typography>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: '#c17c37',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#b56929',
-              },
-            }}
-            onClick={handleAddNewRecipe}
-          >
-            Add New Recipe
-          </Button>
-        </Box>
-        <Grid container spacing={2}>
-          {recipes.map((recipe) => (
-            <Grid item xs={12} key={recipe._id} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 2, paddingRight: 2 }}>
-              <Typography variant="h6">{recipe.title}</Typography>
-              <Box>
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: '#c17c37',
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: '#b56929',
-                    },
-                    marginRight: 1,
-                  }}
-                  onClick={() => handleEdit(recipe._id)}
+
+      <Grid item xs={11} sx={{
+        overflowY: 'scroll',
+        height: '100%',
+        padding: 10,
+        maxHeight: '100%',
+      }}>
+        <Grid sx={{backgroundColor: '#1F1D2B', padding: 10, borderRadius: '16px' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+            <Typography variant="h4">
+              Recipe List
+            </Typography>
+            <IconButton
+              sx={{
+                backgroundColor: '#c17c37',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: '#b56929',
+                },
+              }}
+              onClick={handleAddNewRecipe}
+            >
+              <AddIcon sx={{fontSize: '36px'}} />
+            </IconButton>
+          </Box>
+
+          <Grid container spacing={2}>
+            {recipes.map((recipe) => (
+              <Grid item xs={12} key={recipe._id} sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+                <Typography
+                  onClick={() => {navigate(`/recipe/${recipe._id}`)}}
+                  variant="h6"
+                  sx={{cursor: 'pointer'}}
                 >
-                  Edit
-                </Button>
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: '#c17c37',
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: '#b56929',
-                    },
-                  }}
-                  onClick={() => handleDelete(recipe._id)}
-                >
-                  Delete
-                </Button>
-              </Box>
-            </Grid>
-          ))}
+                  {recipe.title}
+                </Typography>
+
+                <Box>
+                  <IconButton
+                    sx={{
+                      backgroundColor: '#c17c37',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: '#b56929',
+                      },
+                      marginRight: 1,
+                    }}
+                    onClick={() => handleEdit(recipe._id)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    sx={{
+                      backgroundColor: '#c17c37',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: '#b56929',
+                      },
+                    }}
+                    onClick={() => handleDelete(recipe._id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
         </Grid>
+
       </Grid>
     </Grid>
   );
