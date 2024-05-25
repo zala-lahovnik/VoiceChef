@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import RecipeDisplay from "../components/RecipeDisplay/RecipeDisplay";
 import SideMenu from "../components/SideMenu/SideMenu";
 import './recipes-page.css'
+import SearchIcon from '@mui/icons-material/Search';
 
 type RecipesPageProps = {}
 
@@ -75,6 +76,7 @@ const HomePage: FC<RecipesPageProps> = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('--')
   const navigate = useNavigate();
   const [filteredRecipes, setFilteredRecipes] = useState<Array<Recipe>>(recipes)
+  const [searchPrompt, setSearchPrompt] = useState<string>('')
 
   const fetchRecipes = async () => {
     try {
@@ -115,9 +117,13 @@ const HomePage: FC<RecipesPageProps> = () => {
     if (selectedCategory !== '--')
       tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) => filteredRecipe.category === selectedCategory)
 
+    if (searchPrompt !== '') {
+      tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) => filteredRecipe.title.toLowerCase().includes(searchPrompt.toLowerCase()))
+    }
+
     setFilteredRecipes(tempFilteredArray)
 
-  }, [selectedCategory])
+  }, [selectedCategory, searchPrompt])
 
   return (
     <Grid container sx={{
@@ -144,7 +150,19 @@ const HomePage: FC<RecipesPageProps> = () => {
           }}>
             <Grid item xs={8}>
               <FormControl fullWidth>
-                <StyledTextField id="search-bar" label="Find something you like ..." variant="outlined" sx={{ style: {color: '#fff'}, borderRadius: '16px'}} />
+                <StyledTextField
+                  id="search-bar"
+                  label="Find something you like ..."
+                  variant="outlined"
+                  sx={{ style: {color: '#fff'}, borderRadius: '16px'}}
+                  value={searchPrompt}
+                  InputProps={{
+                    endAdornment: <SearchIcon />,
+                  }}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setSearchPrompt(event.target.value);
+                  }}
+                />
               </FormControl>
             </Grid>
 
