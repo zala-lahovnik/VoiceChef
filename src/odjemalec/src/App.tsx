@@ -4,11 +4,10 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import HomePage from './pages/HomePage';
 import SingleRecipePage from './pages/SingleRecipePage';
 import { useAuth0 } from '@auth0/auth0-react';
-import Login from './components/Login';
-import Logout from './components/Logout';
 import RecipesPage from "./pages/RecipesPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
 import ProfilePage from "./pages/ProfilePage"; // Importajte komponento Logout
+import axios from 'axios';
 
 const App: React.FC = () => {
   const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
@@ -36,12 +35,33 @@ const App: React.FC = () => {
     }
   }, [isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     console.log('User:', user);
-  }, [user]);
+  }, [user]);*/
 
-  console.log('isLoading:', isLoading);
-  console.log('isAuthenticated:', isAuthenticated);
+  /*console.log('isLoading:', isLoading);
+  console.log('isAuthenticated:', isAuthenticated);*/
+  useEffect(() => {
+    const saveUser = async () => {
+      try {
+        const token = sessionStorage.getItem('accessToken');
+        if (token && user) {
+          await axios.post('http://localhost:5000/auth/register', {}, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          console.log('User saved to backend');
+        }
+      } catch (error) {
+        console.error('Error saving user:', error);
+      }
+    };
+
+    if (isAuthenticated && user) {
+      saveUser();
+    }
+  }, [isAuthenticated, user]);
 
   if (isLoading) {
     return <div>Loading...</div>;
