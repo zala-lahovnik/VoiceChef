@@ -55,23 +55,6 @@ const SingleRecipePage: FC<SingleRecipePageProps> = () => {
         {recipe && (
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
             <SingleRecipeDisplay key={recipe._id} recipe={recipe} />
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 'auto', marginBottom: 2 }}>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: '#c17c37',
-                  color: 'white',
-                  '&:hover': {
-                    backgroundColor: '#b56929',
-                  },
-                  marginTop: 2,
-                  marginBottom: 4 // Add margin under the button
-                }}
-                onClick={handleDelete}
-              >
-                Delete Recipe
-              </Button>
-            </Box>
           </Box>
         )}
       </Grid>
