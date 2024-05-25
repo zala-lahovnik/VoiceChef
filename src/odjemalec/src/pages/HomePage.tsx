@@ -82,6 +82,7 @@ const HomePage: FC<RecipesPageProps> = () => {
     try {
       const result = await voiceChefApi.get('/recipes');
       setRecipes(result.data);
+      setFilteredRecipes(result.data)
 
       const tempCategoriesArray = result.data.map((recipe: Recipe) => {
         return recipe.category
