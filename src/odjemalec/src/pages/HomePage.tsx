@@ -4,17 +4,17 @@ import voiceChefApi from "../utils/axios";
 import {
   FormControl,
   Grid,
-  InputLabel,
   MenuItem,
-  outlinedInputClasses,
   Select,
-  SelectChangeEvent, styled, TextField,
-  Typography
+  SelectChangeEvent,
+  styled,
+  TextField, Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import RecipeDisplay from "../components/RecipeDisplay/RecipeDisplay";
 import SideMenu from "../components/SideMenu/SideMenu";
 import './recipes-page.css'
+import SearchIcon from '@mui/icons-material/Search';
 
 type RecipesPageProps = {}
 
@@ -75,11 +75,14 @@ const HomePage: FC<RecipesPageProps> = () => {
   const [categories, setCategories] = useState<Array<string>>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('--')
   const navigate = useNavigate();
+  const [filteredRecipes, setFilteredRecipes] = useState<Array<Recipe>>(recipes)
+  const [searchPrompt, setSearchPrompt] = useState<string>('')
 
   const fetchRecipes = async () => {
     try {
       const result = await voiceChefApi.get('/recipes');
       setRecipes(result.data);
+      setFilteredRecipes(result.data)
 
       const tempCategoriesArray = result.data.map((recipe: Recipe) => {
         return recipe.category
@@ -110,6 +113,19 @@ const HomePage: FC<RecipesPageProps> = () => {
     setSelectedCategory(event.target.value as string);
   }
 
+  useEffect(() => {
+    let tempFilteredArray = recipes
+    if (selectedCategory !== '--')
+      tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) => filteredRecipe.category === selectedCategory)
+
+    if (searchPrompt !== '') {
+      tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) => filteredRecipe.title.toLowerCase().includes(searchPrompt.toLowerCase()))
+    }
+
+    setFilteredRecipes(tempFilteredArray)
+
+  }, [selectedCategory, searchPrompt])
+
   return (
     <Grid container sx={{
       display: 'flex',
@@ -135,7 +151,19 @@ const HomePage: FC<RecipesPageProps> = () => {
           }}>
             <Grid item xs={8}>
               <FormControl fullWidth>
-                <StyledTextField id="search-bar" label="Find something you like ..." variant="outlined" sx={{ style: {color: '#fff'}, borderRadius: '16px'}} />
+                <StyledTextField
+                  id="search-bar"
+                  label="Find something you like ..."
+                  variant="outlined"
+                  sx={{ style: {color: '#fff'}, borderRadius: '16px'}}
+                  value={searchPrompt}
+                  InputProps={{
+                    endAdornment: <SearchIcon />,
+                  }}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setSearchPrompt(event.target.value);
+                  }}
+                />
               </FormControl>
             </Grid>
 
@@ -177,13 +205,18 @@ const HomePage: FC<RecipesPageProps> = () => {
             columnGap: 2,
             paddingTop: '150px'
           }}>
-            {recipes && recipes.map((recipe) => {
+            {filteredRecipes && filteredRecipes.map((recipe) => {
               return (
                 <Grid key={recipe._id} item xs={12} sm={12} md={4} lg={2} onClick={() => { handleOnClickOnRecipe(recipe._id) }} sx={{cursor: 'pointer'}}>
                   <RecipeDisplay recipe={recipe} />
                 </Grid>
               )
             })}
+            {filteredRecipes.length === 0 &&
+              <Typography variant={'h5'}>
+                  No recipes found.
+              </Typography>
+            }
           </Grid>
         </Grid>
       </Grid>

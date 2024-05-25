@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import { auth } from 'express-openid-connect';
 import checkJwt from './middleware/auth.js'; // Middleware za preverjanje JWT
 
+
 dotenv.config();
 
 const app = express();
@@ -34,11 +35,15 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+
 // Nastavitve Auth0
-app.use(auth(config));
+//app.use(auth(config));
+
 
 // Javne poti
 app.use('/auth', authRoute);
+console.log('Auth route registered'); // Diagnostic log
+
 app.get('/', (req, res) => {
   res.send('Welcome to Voice Chef!');
 });
