@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import connectDB from './db.js';
 import recipeRoute from './routes/recipesRoute.js';
 import authRoute from './routes/authRoute.js';
+import itemRoute from './routes/itemsRoute.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { auth } from 'express-openid-connect';
@@ -45,6 +46,7 @@ app.get('/', (req, res) => {
 // Zaščitene poti
 app.use('/recipes', recipeRoute);
 // app.use('/recipes', checkJwt, recipeRoute);
+app.use('/items', itemRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
