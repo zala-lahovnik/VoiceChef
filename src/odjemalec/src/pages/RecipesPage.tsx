@@ -1,4 +1,4 @@
-import { Grid, Typography, Button, Box } from "@mui/material";
+import {Grid, Typography, Button, Box, Modal, Paper, TextField, DialogActions} from "@mui/material";
 import SideMenu from "../components/SideMenu/SideMenu";
 import React, { useEffect, useState } from "react";
 import { Recipe } from "../utils/recipeTypes";
@@ -12,6 +12,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const RecipesPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const navigate = useNavigate();
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
+  const [currentRecipe, setCurrentRecipe] = useState<Recipe | null>(null)
 
   const fetchRecipes = async () => {
     try {
@@ -30,6 +32,8 @@ const RecipesPage = () => {
     try {
       await voiceChefApi.delete(`/recipes/${id}`);
       fetchRecipes(); // Refresh the list after deletion
+      setCurrentRecipe(null)
+      setDeleteModalOpen(false)
     } catch (error) {
       console.error('Error deleting recipe', error);
     }
@@ -42,6 +46,8 @@ const RecipesPage = () => {
   const handleAddNewRecipe = () => {
     navigate('/add-recipe');
   };
+
+  const handleClose = () => setDeleteModalOpen(false)
 
   return (
     <Grid container sx={{
@@ -118,7 +124,7 @@ const RecipesPage = () => {
                         backgroundColor: '#b56929',
                       },
                     }}
-                    onClick={() => handleDelete(recipe._id)}
+                    onClick={() => {setCurrentRecipe(recipe); setDeleteModalOpen(true)}}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -127,8 +133,53 @@ const RecipesPage = () => {
             ))}
           </Grid>
         </Grid>
-
       </Grid>
+
+      <Modal
+        open={deleteModalOpen}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '5px 10px'}}
+      >
+        <Paper sx={{padding: 2, paddingLeft: 4, paddingRight: 4, minWidth: '40%', backgroundColor: '#252836', borderRadius: '16px'}}>
+          <Typography id="delete-recipe-modal-title" variant="h6" component="h2" sx={{color: '#fff', paddingBottom: 2}}>
+            Delete this recipe?
+          </Typography>
+
+          <Typography sx={{color: '#fff'}}>
+            {currentRecipe?.title}
+          </Typography>
+
+          {currentRecipe &&
+          <DialogActions>
+            <Button sx={{
+              backgroundColor: 'rgb(183, 29, 24)',
+              padding: 1,
+              paddingLeft: 2,
+              paddingRight: 2,
+              color: '#fff',
+              fontWeight: 700
+            }}
+                    onClick={() => {handleDelete(currentRecipe?._id)}} autoFocus>
+              Delete
+            </Button>
+            <Button
+              sx={{
+                backgroundColor: '#757575',
+                padding: 1,
+                paddingLeft: 2,
+                paddingRight: 2,
+                color: '#fff',
+                fontWeight: 700
+              }}
+                    onClick={handleClose}>
+              Cancel
+            </Button>
+          </DialogActions>
+          }
+        </Paper>
+      </Modal>
     </Grid>
   );
 };
