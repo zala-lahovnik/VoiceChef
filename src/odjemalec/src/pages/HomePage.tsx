@@ -8,7 +8,7 @@ import {
   Select,
   SelectChangeEvent,
   styled,
-  TextField,
+  TextField, Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import RecipeDisplay from "../components/RecipeDisplay/RecipeDisplay";
@@ -211,6 +211,11 @@ const HomePage: FC<RecipesPageProps> = () => {
                 </Grid>
               )
             })}
+            {filteredRecipes.length === 0 &&
+              <Typography variant={'h5'}>
+                  No recipes found.
+              </Typography>
+            }
           </Grid>
         </Grid>
       </Grid>
