@@ -16,6 +16,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Item } from '../../utils/itemTypes';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 interface ItemRowProps {
   item: Item;
@@ -221,8 +223,7 @@ const ItemRow: React.FC<ItemRowProps> = ({
       <TableCell align="center">
         {isEditing(item._id) ? (
           <>
-            <Button
-              variant="contained"
+            <IconButton
               sx={{
                 backgroundColor: '#4caf50',
                 color: 'white',
@@ -232,10 +233,9 @@ const ItemRow: React.FC<ItemRowProps> = ({
               }}
               onClick={() => handleEditItem(item._id)}
             >
-              Save
-            </Button>
-            <Button
-              variant="contained"
+              <SaveIcon />
+            </IconButton>
+            <IconButton
               sx={{
                 backgroundColor: '#f44336',
                 color: 'white',
@@ -246,8 +246,8 @@ const ItemRow: React.FC<ItemRowProps> = ({
               }}
               onClick={handleCancelEditing}
             >
-              Cancel
-            </Button>
+              <CancelIcon />
+            </IconButton>
           </>
         ) : (
           <>
