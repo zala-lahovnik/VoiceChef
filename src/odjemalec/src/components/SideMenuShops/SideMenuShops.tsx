@@ -118,7 +118,8 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
                   fontSize: '18px',
                   textAlign: 'center', // Center-align the text
                   display: 'flex',
-                  alignItems: 'center' // Align text vertically with icon
+                  alignItems: 'center', // Align text vertically with icon
+                  paddingRight: 2
                 }}
               >
                 Uncategorized ({uncategorized})
@@ -170,7 +171,8 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
                   fontSize: '18px',
                   textAlign: 'center', // Center-align the text
                   display: 'flex',
-                  alignItems: 'center' // Align text vertically with icon
+                  alignItems: 'center', // Align text vertically with icon
+                  paddingRight: 2
                 }}
               >
                 All ({all})
@@ -223,7 +225,8 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
                     fontSize: '18px',
                     textAlign: 'center', // Center-align the text
                     display: 'flex',
-                    alignItems: 'center' // Align text vertically with icon
+                    alignItems: 'center', // Align text vertically with icon
+                    paddingRight: 2
                   }}
                 >
                   {store} ({stores[store]})
