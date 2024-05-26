@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableContainer, TableRow, Paper, Typography, TextField, Button } from "@mui/material";
 import ItemRow from './ItemRow';
 import { Item } from "../../utils/itemTypes";
+import {StyledTextField} from "../../pages/HomePage";
+import IconButton from "@mui/material/IconButton";
+import AddIcon from "@mui/icons-material/Add";
 
 interface ItemTableProps {
     items: Item[];
@@ -79,7 +82,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
                     <TableBody>
                         <TableRow>
                             <TableCell align="center">
-                                <TextField
+                                <StyledTextField
                                     label={'Item name'}
                                     value={newItemName}
                                     onChange={(e) => setNewItemName(e.target.value)}
@@ -93,16 +96,10 @@ const ItemTable: React.FC<ItemTableProps> = ({
                                             borderColor: 'white',
                                         },
                                     }}
-                                    sx={{
-                                        color: 'white',
-                                        '& .MuiInputLabel-root': { color: 'white' },
-                                        '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-                                            borderColor: 'white',
-                                        },
-                                    }} />
+                                />
                             </TableCell>
                             <TableCell align="center">
-                                <TextField
+                                <StyledTextField
                                     label='Quantity'
                                     value={newItemQuantity}
                                     onChange={(e) => setNewItemQuantity(Number(e.target.value))}
@@ -117,16 +114,10 @@ const ItemTable: React.FC<ItemTableProps> = ({
                                             borderColor: 'white',
                                         },
                                     }}
-                                    sx={{
-                                        color: 'white',
-                                        '& .MuiInputLabel-root': { color: 'white' },
-                                        '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-                                            borderColor: 'white',
-                                        },
-                                    }} />
+                                />
                             </TableCell>
                             <TableCell align="center">
-                                <TextField
+                                <StyledTextField
                                     label='Unit'
                                     value={newItemUnit}
                                     onChange={(e) => setNewItemUnit(e.target.value)}
@@ -140,28 +131,18 @@ const ItemTable: React.FC<ItemTableProps> = ({
                                             borderColor: 'white',
                                         },
                                     }}
-                                    sx={{
-                                        color: 'white',
-                                        '& .MuiInputLabel-root': { color: 'white' },
-                                        '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-                                            borderColor: 'white',
-                                        },
-                                    }} />
+                                />
                             </TableCell>
                             <TableCell align="center">
-                                <Button
-                                    variant="contained"
+                                <IconButton
                                     sx={{
-                                        backgroundColor: '#c17c37',
-                                        color: 'white',
-                                        '&:hover': {
-                                            backgroundColor: '#b56929',
-                                        },
+                                        backgroundColor: '#d17a22',
+                                        color: 'white'
                                     }}
                                     onClick={handleAddNewItem}
                                 >
-                                    Add
-                                </Button>
+                                    <AddIcon />
+                                </IconButton>
                             </TableCell>
                         </TableRow>
                     </TableBody>

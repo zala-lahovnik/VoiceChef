@@ -18,6 +18,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Item } from '../../utils/itemTypes';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import {StyledTextField, WhiteSelect} from "../../pages/HomePage";
 
 interface ItemRowProps {
   item: Item;
@@ -91,7 +92,7 @@ const ItemRow: React.FC<ItemRowProps> = ({
       </TableCell>
       <TableCell align="center">
         {isEditing(item._id) ? (
-          <TextField
+          <StyledTextField
             label="Item name"
             value={editItemName}
             onChange={(e) => setEditItemName(e.target.value)}
@@ -101,13 +102,6 @@ const ItemRow: React.FC<ItemRowProps> = ({
             InputProps={{
               style: {
                 color: 'white',
-                borderColor: 'white',
-              },
-            }}
-            sx={{
-              color: 'white',
-              '& .MuiInputLabel-root': { color: 'white' },
-              '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
                 borderColor: 'white',
               },
             }}
@@ -122,7 +116,7 @@ const ItemRow: React.FC<ItemRowProps> = ({
         {isEditing(item._id) ? (
           <Grid container spacing={1} alignItems="center">
             <Grid item xs={6}>
-              <TextField
+              <StyledTextField
                 label="Quantity"
                 value={editItemQuantity}
                 onChange={(e) => setEditItemQuantity(Number(e.target.value))}
@@ -136,17 +130,10 @@ const ItemRow: React.FC<ItemRowProps> = ({
                     borderColor: 'white',
                   },
                 }}
-                sx={{
-                  color: 'white',
-                  '& .MuiInputLabel-root': { color: 'white' },
-                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'white',
-                  },
-                }}
               />
             </Grid>
             <Grid item xs={6}>
-              <TextField
+              <StyledTextField
                 label="Unit"
                 value={editItemUnit}
                 onChange={(e) => setEditItemUnit(e.target.value)}
@@ -156,13 +143,6 @@ const ItemRow: React.FC<ItemRowProps> = ({
                 InputProps={{
                   style: {
                     color: 'white',
-                    borderColor: 'white',
-                  },
-                }}
-                sx={{
-                  color: 'white',
-                  '& .MuiInputLabel-root': { color: 'white' },
-                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
                     borderColor: 'white',
                   },
                 }}
@@ -184,25 +164,18 @@ const ItemRow: React.FC<ItemRowProps> = ({
               variant="outlined"
               sx={{
                 color: 'white',
-                '& .MuiInputLabel-root': { color: 'white' },
-                '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'white',
-                },
+                '& .MuiInputLabel-root': { color: 'white' }
               }}
             >
-              <InputLabel sx={{ color: 'white' }}>Store</InputLabel>
-              <Select
+              <WhiteSelect
                 value={editItemStore}
-                onChange={(e) => setEditItemStore(e.target.value)}
+                onChange={(e) => setEditItemStore(e.target.value as string)}
                 fullWidth
                 label="Store"
                 disabled={!canEditStore} // Disable if cannot edit store
                 sx={{
                   color: 'white',
-                  '& .MuiInputLabel-root': { color: 'white' },
-                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'white',
-                  }
+                  '& .MuiInputLabel-root': { color: 'white' }
                 }}
               >
                 <MenuItem value={'Local Market'}>Local Market</MenuItem>
@@ -211,7 +184,7 @@ const ItemRow: React.FC<ItemRowProps> = ({
                 <MenuItem value={'Butcher Shop'}>Butcher Shop</MenuItem>
                 <MenuItem value={'Local Farm'}>Local Farm</MenuItem>
                 <MenuItem value={'Uncategorized'}>Uncategorized</MenuItem>
-              </Select>
+              </WhiteSelect>
             </FormControl>
           ) : (
             <Typography variant="body1" sx={{ color: '#fff' }}>
@@ -225,11 +198,8 @@ const ItemRow: React.FC<ItemRowProps> = ({
           <>
             <IconButton
               sx={{
-                backgroundColor: '#4caf50',
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: '#45a049',
-                },
+                backgroundColor: '#d17a22',
+                color: 'white'
               }}
               onClick={() => handleEditItem(item._id)}
             >
@@ -237,11 +207,8 @@ const ItemRow: React.FC<ItemRowProps> = ({
             </IconButton>
             <IconButton
               sx={{
-                backgroundColor: '#f44336',
+                backgroundColor: '#2D303E',
                 color: 'white',
-                '&:hover': {
-                  backgroundColor: '#e53935',
-                },
                 marginLeft: 1,
               }}
               onClick={handleCancelEditing}
