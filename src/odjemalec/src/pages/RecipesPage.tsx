@@ -75,7 +75,7 @@ const RecipesPage = () => {
             </Typography>
             <IconButton
               sx={{
-                backgroundColor: '#c17c37',
+                backgroundColor: '#d17a22',
                 color: 'white',
                 '&:hover': {
                   backgroundColor: '#b56929',
@@ -105,7 +105,7 @@ const RecipesPage = () => {
                 <Box>
                   <IconButton
                     sx={{
-                      backgroundColor: '#c17c37',
+                      backgroundColor: '#d17a22',
                       color: 'white',
                       '&:hover': {
                         backgroundColor: '#b56929',
@@ -118,7 +118,7 @@ const RecipesPage = () => {
                   </IconButton>
                   <IconButton
                     sx={{
-                      backgroundColor: '#c17c37',
+                      backgroundColor: '#d17a22',
                       color: 'white',
                       '&:hover': {
                         backgroundColor: '#b56929',

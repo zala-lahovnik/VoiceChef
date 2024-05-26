@@ -92,7 +92,11 @@ const SideMenu = () => {
                 padding: 2,
                 backgroundColor: routePath.pathname === '/' ? '#d17a22' : '',
                 borderRadius: '8px',
-                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))',
+                '&:hover': {
+                  backgroundColor: '#b56929',
+                  filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+                },
               }}
               onClick={() => {navigation('/')}}
             >
@@ -143,7 +147,11 @@ const SideMenu = () => {
                 padding: 2,
                 backgroundColor: routePath.pathname === '/shopping-list' ? '#d17a22' : '',
                 borderRadius: '8px',
-                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))',
+                '&:hover': {
+                  backgroundColor: '#b56929',
+                  filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+                },
               }}
               onClick={() => {navigation('/shopping-list')}}
             >
@@ -196,13 +204,18 @@ const SideMenu = () => {
               alignItems: 'center'
             }
           }>
-            <IconButton sx={{
-              padding: 2,
-              backgroundColor: (routePath.pathname.includes('/recipe/') ||
-                routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
-                || routePath.pathname.includes('/edit-recipe/')) ? '#d17a22' : '',
-              borderRadius: '8px',
-              filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+            <IconButton
+              sx={{
+                padding: 2,
+                backgroundColor: (routePath.pathname.includes('/recipe/') ||
+                  routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
+                  || routePath.pathname.includes('/edit-recipe/')) ? '#d17a22' : '',
+                borderRadius: '8px',
+                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))',
+                '&:hover': {
+                  backgroundColor: '#b56929',
+                  filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+                },
               }}
               onClick={() => {navigation('/recipes')}}
             >
@@ -251,7 +264,11 @@ const SideMenu = () => {
               padding: 2,
               backgroundColor: routePath.pathname === '/profile' ? '#d17a22' : '',
               borderRadius: '8px',
-              filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+              filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))',
+              '&:hover': {
+                backgroundColor: '#b56929',
+                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+              },
               }}
               onClick={() => {navigation('/profile')}}
             >

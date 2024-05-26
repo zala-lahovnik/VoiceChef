@@ -45,11 +45,11 @@ export interface RecipeData {
 export const Title = styled(Typography)({
   textAlign: 'center',
   marginBottom: '20px',
-  color: '#c17c37',
+  color: '#fff',
 });
 
 export const CustomButton = styled(Button)({
-  backgroundColor: '#c17c37',
+  backgroundColor: '#d17a22',
   color: 'white',
   borderRadius: '16px',
   padding: '8px 12px',
@@ -63,7 +63,11 @@ export const CustomButton = styled(Button)({
 
 export const CustomIconButton = styled(IconButton)({
   color: '#fff',
-  backgroundColor: '#b56929',
+  backgroundColor: '#d17a22',
+  '&:hover': {
+    backgroundColor: '#b56929',
+    filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+  },
 });
 
 export const DynamicField = styled('div')({
