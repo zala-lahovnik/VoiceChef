@@ -112,7 +112,9 @@ const SideMenu = () => {
             justifyContent: 'center',
             alignItems: 'center',
             borderTopRightRadius: routePath.pathname === '/' ? '16px' : '',
-            borderBottomRightRadius: routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? '16px': '',
+            borderBottomRightRadius: (routePath.pathname.includes('/recipe/') ||
+              routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
+              || routePath.pathname.includes('/edit-recipe/')) ? '16px': '',
             backgroundColor: '#1F1D2B'
           }
         }>
@@ -149,12 +151,16 @@ const SideMenu = () => {
             </IconButton>
           </Grid>
         </Grid>
-        <Grid item xs={12} sx={routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? {
+        <Grid item xs={12} sx={(routePath.pathname.includes('/recipe/') ||
+          routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
+          || routePath.pathname.includes('/edit-recipe/')) ? {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#1F1D2B',
-            marginLeft: routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? 0 : 2,
+            marginLeft: (routePath.pathname.includes('/recipe/') ||
+              routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
+              || routePath.pathname.includes('/edit-recipe/')) ? 0 : 2,
           } :
           {
             display: 'flex',
@@ -165,7 +171,10 @@ const SideMenu = () => {
             backgroundColor: '#1F1D2B'
           }
         }>
-          <Grid item xs={12} sx={ routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? {
+          <Grid item xs={12} sx={
+            (routePath.pathname.includes('/recipe/') ||
+                routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
+                || routePath.pathname.includes('/edit-recipe/')) ? {
               padding: 2,
               display: 'flex',
               marginLeft: 1.5,
@@ -178,7 +187,9 @@ const SideMenu = () => {
             :
             {
               padding: 2,
-              backgroundColor: routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? '#EA7C69' : '',
+              backgroundColor: (routePath.pathname.includes('/recipe/') ||
+                routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
+                || routePath.pathname.includes('/edit-recipe/')) ? '#EA7C69' : '',
               borderRadius: '8px',
               display: 'flex',
               justifyContent: 'center',
@@ -187,7 +198,9 @@ const SideMenu = () => {
           }>
             <IconButton sx={{
               padding: 2,
-              backgroundColor: (routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes') ? '#d17a22' : '',
+              backgroundColor: (routePath.pathname.includes('/recipe/') ||
+                routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
+                || routePath.pathname.includes('/edit-recipe/')) ? '#d17a22' : '',
               borderRadius: '8px',
               filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
               }}
@@ -208,7 +221,9 @@ const SideMenu = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            borderTopRightRadius: routePath.pathname.includes('/recipe/') || routePath.pathname === '/recipes' ? '16px' : '',
+            borderTopRightRadius: (routePath.pathname.includes('/recipe/') ||
+              routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
+              || routePath.pathname.includes('/edit-recipe/')) ? '16px' : '',
             backgroundColor: '#1F1D2B'
           }
         }>
