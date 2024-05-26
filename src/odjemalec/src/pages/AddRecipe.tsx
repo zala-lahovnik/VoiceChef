@@ -16,23 +16,23 @@ import './AddRecipe.css';
 import SideMenu from "../components/SideMenu/SideMenu";
 import {StyledTextField} from "./HomePage";
 
-interface Time {
+export interface Time {
   label: string;
   time: string;
 }
 
-interface Ingredient {
+export interface Ingredient {
   quantity: number;
   unit: string;
   description: string;
 }
 
-interface Step {
+export interface Step {
   step: number;
   text: string;
 }
 
-interface RecipeData {
+export interface RecipeData {
   title: string;
   category: string;
   times: Time[];
@@ -42,13 +42,13 @@ interface RecipeData {
   img: string;
 }
 
-const Title = styled(Typography)({
+export const Title = styled(Typography)({
   textAlign: 'center',
   marginBottom: '20px',
   color: '#c17c37',
 });
 
-const CustomButton = styled(Button)({
+export const CustomButton = styled(Button)({
   backgroundColor: '#c17c37',
   color: 'white',
   borderRadius: '16px',
@@ -61,12 +61,12 @@ const CustomButton = styled(Button)({
   },
 });
 
-const CustomIconButton = styled(IconButton)({
+export const CustomIconButton = styled(IconButton)({
   color: '#fff',
   backgroundColor: '#b56929',
 });
 
-const DynamicField = styled('div')({
+export const DynamicField = styled('div')({
   display: 'flex',
   alignItems: 'center',
   gap: '10px',
