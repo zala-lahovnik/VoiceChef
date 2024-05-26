@@ -18,7 +18,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 type RecipesPageProps = {}
 
-const StyledTextField = styled(TextField)({
+export const StyledTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
     color: 'white',
     backgroundColor: '#2D303E',
