@@ -43,7 +43,7 @@ export const StyledTextField = styled(TextField)({
   },
 });
 
-const WhiteSelect = styled(Select)(({ theme }) => ({
+export const WhiteSelect = styled(Select)(({ theme }) => ({
   color: 'white',
   borderRadius: '16px',
   backgroundColor: '#2D303E',
