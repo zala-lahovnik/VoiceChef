@@ -2,8 +2,9 @@ import React, { FC, useEffect, useState } from "react";
 import { Recipe } from "../utils/recipeTypes";
 import voiceChefApi from "../utils/axios";
 import {
+  Box,
   FormControl,
-  Grid,
+  Grid, LinearProgress,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -71,13 +72,14 @@ const WhiteSelect = styled(Select)(({ theme }) => ({
 
 
 const HomePage: FC<RecipesPageProps> = () => {
-  const [recipes, setRecipes] = useState<Array<Recipe>>([]);
+  const [recipes, setRecipes] = useState<Array<Recipe> | null>(null);
   const [categories, setCategories] = useState<Array<string>>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('--')
   const navigate = useNavigate();
-  const [filteredRecipes, setFilteredRecipes] = useState<Array<Recipe>>(recipes)
+  const [filteredRecipes, setFilteredRecipes] = useState<Array<Recipe> | null>(null)
   const [searchPrompt, setSearchPrompt] = useState<string>('')
 
+  
   const fetchRecipes = async () => {
     try {
       const result = await voiceChefApi.get('/recipes');
@@ -114,16 +116,17 @@ const HomePage: FC<RecipesPageProps> = () => {
   }
 
   useEffect(() => {
-    let tempFilteredArray = recipes
-    if (selectedCategory !== '--')
-      tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) => filteredRecipe.category === selectedCategory)
+    if(recipes) {
+      let tempFilteredArray = recipes
+      if (selectedCategory !== '--')
+        tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) => filteredRecipe.category === selectedCategory)
 
-    if (searchPrompt !== '') {
-      tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) => filteredRecipe.title.toLowerCase().includes(searchPrompt.toLowerCase()))
+      if (searchPrompt !== '') {
+        tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) => filteredRecipe.title.toLowerCase().includes(searchPrompt.toLowerCase()))
+      }
+
+      setFilteredRecipes(tempFilteredArray)
     }
-
-    setFilteredRecipes(tempFilteredArray)
-
   }, [selectedCategory, searchPrompt])
 
   return (
@@ -212,10 +215,20 @@ const HomePage: FC<RecipesPageProps> = () => {
                 </Grid>
               )
             })}
-            {filteredRecipes.length === 0 &&
-              <Typography variant={'h5'}>
+            {!filteredRecipes ?
+              <Box sx={{width: '100%', marginTop: 5}}>
+                <LinearProgress  sx={{
+                  backgroundColor: '#252836',
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: '#b56929'
+                  }}}
+                />
+              </Box>
+              :
+              filteredRecipes.length === 0 &&
+                <Typography variant={'h5'}>
                   No recipes found.
-              </Typography>
+                </Typography>
             }
           </Grid>
         </Grid>
