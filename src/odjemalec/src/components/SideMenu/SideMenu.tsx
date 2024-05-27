@@ -9,7 +9,7 @@ import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded
 import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
-
+import KitchenIcon from '@mui/icons-material/Kitchen';
 
 const SideMenu = () => {
   const routePath = useLocation()
@@ -175,7 +175,7 @@ const SideMenu = () => {
             justifyContent: 'center',
             alignItems: 'center',
             borderTopRightRadius: routePath.pathname === '/shopping-list' ? '16px' : '',
-            borderBottomRightRadius: routePath.pathname === '/profile' ? '16px' : '',
+            borderBottomRightRadius: routePath.pathname === '/pick-and-choose' ? '16px' : '',
             backgroundColor: '#1F1D2B'
           }
         }>
@@ -223,6 +223,64 @@ const SideMenu = () => {
             </IconButton>
           </Grid>
         </Grid>
+
+        <Grid item xs={12} sx={routePath.pathname === '/pick-and-choose' ? {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#1F1D2B',
+            marginLeft: routePath.pathname === '/pick-and-choose' ? 0 : 2,
+          } :
+          {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderTopRightRadius: (routePath.pathname.includes('/recipe/') ||
+              routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
+              || routePath.pathname.includes('/edit-recipe/')) ? '16px' : '',
+            borderBottomRightRadius: routePath.pathname === '/profile' ? '16px' : '',
+            backgroundColor: '#1F1D2B'
+          }
+        }>
+          <Grid item xs={12} sx={
+            routePath.pathname === '/pick-and-choose' ? {
+                padding: 2,
+                display: 'flex',
+                marginLeft: 1.5,
+                paddingRight: 3.5,
+                backgroundColor: '#252836',
+                borderTopLeftRadius: '16px',
+                borderBottomLeftRadius: '16px',
+                justifyContent: 'center',
+              }
+              :
+              {
+                padding: 2,
+                backgroundColor: routePath.pathname === '/pick-and-choose' ? '#EA7C69' : '',
+                borderRadius: '8px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }
+          }>
+            <IconButton
+              sx={{
+                padding: 2,
+                backgroundColor: routePath.pathname === '/pick-and-choose' ? '#d17a22' : '',
+                borderRadius: '8px',
+                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))',
+                '&:hover': {
+                  backgroundColor: '#b56929',
+                  filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+                },
+              }}
+              onClick={() => {navigation('/pick-and-choose')}}
+            >
+              <KitchenIcon sx={{color: '#fff', fontSize: '36px'}} />
+            </IconButton>
+          </Grid>
+        </Grid>
+
         <Grid item xs={12} sx={routePath.pathname === '/profile' ? {
             display: 'flex',
             justifyContent: 'center',
@@ -234,9 +292,7 @@ const SideMenu = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            borderTopRightRadius: (routePath.pathname.includes('/recipe/') ||
-              routePath.pathname === '/recipes' || routePath.pathname === '/add-recipe'
-              || routePath.pathname.includes('/edit-recipe/')) ? '16px' : '',
+            borderTopRightRadius: routePath.pathname === '/pick-and-choose' ? '16px' : '',
             backgroundColor: '#1F1D2B'
           }
         }>
