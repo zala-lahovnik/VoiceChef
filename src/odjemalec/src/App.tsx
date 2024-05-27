@@ -10,6 +10,7 @@ import ProfilePage from "./pages/ProfilePage"; // Importajte komponento Logout
 import axios from 'axios';
 import AddRecipe from "./pages/AddRecipe";
 import EditRecipePage from './pages/EditRecipePage';
+import PickAndChoosePage from "./pages/PickAndChoosePage";
 
 
 const App: React.FC = () => {
@@ -80,6 +81,7 @@ const App: React.FC = () => {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/add-recipe" element={<AddRecipe />} />
           <Route path="/edit-recipe/:id" element={<EditRecipePage />} />
+          <Route path="/pick-and-choose" element={<PickAndChoosePage />} />
         </Routes>
     </Router>
   );
