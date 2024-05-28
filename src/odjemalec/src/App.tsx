@@ -6,16 +6,24 @@ import SingleRecipePage from './pages/SingleRecipePage';
 import { useAuth0 } from '@auth0/auth0-react';
 import RecipesPage from "./pages/RecipesPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
-import ProfilePage from "./pages/ProfilePage"; // Importajte komponento Logout
 import axios from 'axios';
 import AddRecipe from "./pages/AddRecipe";
 import EditRecipePage from './pages/EditRecipePage';
 import PickAndChoosePage from "./pages/PickAndChoosePage";
+import { initKeyboardShortcuts, cleanupKeyboardShortcuts } from './keyboard-shortcuts';
+
 
 
 const App: React.FC = () => {
   const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
   const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    initKeyboardShortcuts();
+    return () => {
+      cleanupKeyboardShortcuts();
+    };
+  }, []);
 
   useEffect(() => {
     const getToken = async () => {
@@ -39,12 +47,7 @@ const App: React.FC = () => {
     }
   }, [isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently]);
 
-  /*useEffect(() => {
-    console.log('User:', user);
-  }, [user]);*/
 
-  /*console.log('isLoading:', isLoading);
-  console.log('isAuthenticated:', isAuthenticated);*/
   useEffect(() => {
     const saveUser = async () => {
       try {
@@ -78,7 +81,6 @@ const App: React.FC = () => {
           <Route path="/recipe/:id" element={<SingleRecipePage />} />
           <Route path="/recipes" element={<RecipesPage />} />
           <Route path="/shopping-list" element={<ShoppingListPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/add-recipe" element={<AddRecipe />} />
           <Route path="/edit-recipe/:id" element={<EditRecipePage />} />
           <Route path="/pick-and-choose" element={<PickAndChoosePage />} />
