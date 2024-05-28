@@ -281,58 +281,6 @@ const SideMenu = () => {
           </Grid>
         </Grid>
 
-        <Grid item xs={12} sx={routePath.pathname === '/profile' ? {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#1F1D2B',
-            marginLeft: routePath.pathname === '/profile' ? 0 : 2,
-          } :
-          {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderTopRightRadius: routePath.pathname === '/pick-and-choose' ? '16px' : '',
-            backgroundColor: '#1F1D2B'
-          }
-        }>
-          <Grid item xs={12} sx={ routePath.pathname === '/profile' ? {
-              padding: 2,
-              display: 'flex',
-              marginLeft: 1.5,
-              paddingRight: 3.5,
-              backgroundColor: '#252836',
-              borderTopLeftRadius: '16px',
-              borderBottomLeftRadius: '16px',
-              justifyContent: 'center',
-            }
-            :
-            {
-              padding: 2,
-              backgroundColor: routePath.pathname === '/profile' ? '#EA7C69' : '',
-              borderRadius: '8px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }
-          }>
-            <IconButton sx={{
-              padding: 2,
-              backgroundColor: routePath.pathname === '/profile' ? '#d17a22' : '',
-              borderRadius: '8px',
-              filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))',
-              '&:hover': {
-                backgroundColor: '#b56929',
-                filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
-              },
-              }}
-              onClick={() => {navigation('/profile')}}
-            >
-              <ManageAccountsRoundedIcon sx={{color: '#fff', fontSize: '36px'}} />
-            </IconButton>
-          </Grid>
-        </Grid>
-
         <Grid item xs={12}  sx={routePath.pathname === '/login' ? {
             display: 'flex',
             justifyContent: 'center',
@@ -344,7 +292,7 @@ const SideMenu = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            borderTopRightRadius: routePath.pathname === '/profile' ? '16px' : '',
+            borderTopRightRadius: routePath.pathname === '/pick-and-choose' ? '16px' : '',
             backgroundColor: '#1F1D2B'
           }}>
           <Grid item xs={12} sx={ routePath.pathname === '/login' ? {

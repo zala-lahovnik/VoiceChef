@@ -6,7 +6,6 @@ import SingleRecipePage from './pages/SingleRecipePage';
 import { useAuth0 } from '@auth0/auth0-react';
 import RecipesPage from "./pages/RecipesPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
-import ProfilePage from "./pages/ProfilePage";
 import axios from 'axios';
 import AddRecipe from "./pages/AddRecipe";
 import EditRecipePage from './pages/EditRecipePage';
@@ -82,7 +81,6 @@ const App: React.FC = () => {
           <Route path="/recipe/:id" element={<SingleRecipePage />} />
           <Route path="/recipes" element={<RecipesPage />} />
           <Route path="/shopping-list" element={<ShoppingListPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/add-recipe" element={<AddRecipe />} />
           <Route path="/edit-recipe/:id" element={<EditRecipePage />} />
           <Route path="/pick-and-choose" element={<PickAndChoosePage />} />
