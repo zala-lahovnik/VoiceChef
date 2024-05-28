@@ -83,6 +83,7 @@ const HomePage: FC<RecipesPageProps> = () => {
   const fetchRecipes = async () => {
     try {
       const result = await voiceChefApi.get('/recipes');
+      console.log('API response:', result.data);
       setRecipes(result.data);
       setFilteredRecipes(result.data)
 
