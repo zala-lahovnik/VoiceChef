@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from "react";
 import voiceChefApi from "../utils/axios";
 import {Recipe, RecipeIngredient} from "../utils/recipeTypes";
-import {FormControl, Grid, Typography} from "@mui/material";
+import {Box, Drawer, FormControl, Grid, Typography} from "@mui/material";
 import SideMenu from "../components/SideMenu/SideMenu";
 import {StyledTextField} from "./HomePage";
 import AddIcon from "@mui/icons-material/Add";
@@ -10,6 +10,8 @@ import EggAltIcon from '@mui/icons-material/EggAlt';
 import DeleteIcon from "@mui/icons-material/Delete";
 import {useNavigate} from "react-router-dom";
 import PickAndChooseRecipeDisplay from "../components/PickAndChooseRecipeDisplay/PickAndChooseRecipeDisplay";
+import MenuIcon from "@mui/icons-material/Menu";
+import {useResponsive} from "../hooks/responsive";
 
 type PickAndChoosePageProps = {
 
@@ -24,6 +26,9 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
   const [currentItemName, setCurrentItemName] = useState<string>('')
   const [ingredients, setIngredients] = useState<Array<RecipeIngredient>>([])
   const [addedIngredient, setAddedIngredient] = useState<RecipeIngredient>({_id: '', quantity: 0, unit: '', description: ''})
+
+  const responsive = useResponsive('up', 'lg')
+  const [openMenu, setOpenMenu] = useState<boolean>(false)
 
   const fetchRecipes = async () => {
     try {
@@ -87,21 +92,60 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
       justifyContent: 'center',
       alignItems: 'flex-start',
       maxHeight: '100%',
-      height: {xs: '50vh', sm: '95vh', md: '100vh'}
+      height: {xs: '50vh', sm: '95vh', lg: '100vh'}
     }}>
-      <Grid item xs={1} sx={{height: '100%'}}>
-        <SideMenu />
-      </Grid>
+      {responsive ?
+        <Grid item xs={12} lg={1} sx={{height: {xs: '0%', lg: '100%'}}}>
+          <SideMenu />
+        </Grid>
+        :
+        <Grid
+          xs={12}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            padding: 2,
+            backgroundColor: '#1F1D2B',
+            borderBottomLeftRadius: '16px',
+            borderBottomRightRadius: '16px',
+          }}
+        >
+          <IconButton
+            onClick={() => {setOpenMenu(true)}}
+          >
+            <MenuIcon sx={{color: '#fff'}} />
+          </IconButton>
+          <Drawer
+            open={openMenu}
+            onClose={() => setOpenMenu(false)}
+            PaperProps={{
+              sx: {
+                backgroundColor: 'transparent',
+                width: {
+                  xs: '60%',
+                  sm: '40%',
+                  md: '30%',
+                  lg: '20%'
+                }
+              }
+            }}>
+            <Box sx={{width: '100%', height: '100%'}}>
+              <SideMenu />
+            </Box>
+          </Drawer>
+        </Grid>
+      }
 
-      <Grid item xs={11}
+      <Grid item xs={12} lg={11}
         sx={{
-          overflowY: 'scroll',
+          overflowY: responsive ? 'scroll' : 'none',
           height: '100%',
           paddingBottom: 8,
           paddingTop: 3,
           display: 'flex',
           flexDirection: 'column',
-          padding: 8,
+          padding: responsive ? 8 : 4,
           columnGap: 4
         }}
       >
@@ -109,20 +153,21 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
           Recipe Roulette: What Can You Cook Today?
         </Typography>
 
-        <Grid sx={{display: 'flex', flexDirection: 'row'}}>
-          <Grid item xs={3} sx={{backgroundColor: '#1F1D2B', padding: 2, borderRadius: '16px'}}>
+        <Grid sx={{display: 'flex', flexDirection: responsive ? 'row' : 'column'}}>
+          <Grid item xs={12} lg={3} sx={{backgroundColor: '#1F1D2B', padding: 2, borderRadius: '16px', marginBottom: responsive ? 0 : 2}}>
             {ingredients.length > 0 ? ingredients.map((ingredient: RecipeIngredient) => {
               return (
-                <Grid xs={12} sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                  <Grid xs={10} sx={{display: 'flex', flexDirection: 'row', padding: 2, columnGap: 2}}>
+                <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                  <Grid item xs={12} lg={10} sx={{display: 'flex', flexDirection: 'row', padding: 2, columnGap: responsive ? 2 : 1}}>
                     <EggAltIcon sx={{color: '#fff'}} />
                     <Typography>
                       {ingredient.description}, {ingredient.quantity} {ingredient.unit}
                     </Typography>
                   </Grid>
-                  <Grid xs={2} sx={{display: 'flex', flexDirection: 'row'}}>
+                  <Grid item xs={12} lg={2} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
                     <IconButton
                       sx={{
+                        display: 'flex',
                         backgroundColor: '#d17a22',
                         color: 'white'
                       }}
@@ -145,17 +190,18 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
             }
           </Grid>
 
-          <Grid item xs={9}>
+          <Grid item xs={12} lg={9}>
             <FormControl fullWidth
                sx={{
                  display: 'flex',
-                 flexDirection: 'row',
+                 flexDirection: responsive ? 'row' : 'column',
                  columnGap: 6,
+                 rowGap: 2,
                  justifyContent: 'center',
                  alignItems: 'center',
-                 paddingLeft: 4,
-                 paddingRight: 4,
-                 marginBottom: 4
+                 paddingLeft: responsive ? 4 : 0,
+                 paddingRight: responsive ? 4 : 0,
+                 marginBottom: responsive ? 4 : 0
                }}>
               <StyledTextField
                 label='Ingredient'
@@ -170,7 +216,7 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
                     borderColor: 'white',
                   },
                 }}
-                sx={{width: '39%'}}
+                sx={{width: responsive ? '39%' : '100%'}}
               />
               <StyledTextField
                 label={'Item quantity'}
@@ -185,7 +231,7 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
                     borderColor: 'white',
                   },
                 }}
-                sx={{width: '50%'}}
+                sx={{width: responsive ? '50%' : '100%'}}
               />
               <StyledTextField
                 label='Unit'
@@ -200,13 +246,15 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
                     borderColor: 'white',
                   },
                 }}
-                sx={{width: '39%'}}
+                sx={{width: responsive ? '39%' : '100%'}}
               />
-              <Grid>
+              <Grid sx={{width: '100%'}}>
                 <IconButton
                   sx={{
                     backgroundColor: '#d17a22',
-                    color: 'white'
+                    color: 'white',
+                    width: responsive ? 'fit-content' : '100%',
+                    borderRadius: responsive ?  undefined : '16px'
                   }}
                   onClick={handleAddNewItem}
                 >
@@ -215,9 +263,9 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
               </Grid>
             </FormControl>
 
-            <Grid xs={12} sx={{paddingTop: 8, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}>
+            <Grid item xs={12} sx={{paddingTop: 8, paddingBottom: responsive ? 0 : 8, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}>
               {ingredients.length === 0 ?
-                <Typography variant={'h5'} sx={{textAlign: 'center'}}>
+                <Typography variant={'h5'} sx={{textAlign: 'center', marginBottom: responsive ? 0 : 8}}>
                   Please select your ingredients
                 </Typography>
                 :
