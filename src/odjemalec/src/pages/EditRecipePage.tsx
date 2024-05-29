@@ -6,7 +6,7 @@ import {
   Grid,
   TextField,
   Typography,
-  IconButton
+  IconButton, Drawer, Box
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -16,11 +16,15 @@ import './AddRecipe.css';
 import {StyledTextField} from "./HomePage";
 import {CustomButton, CustomIconButton, DynamicField, RecipeData, Title} from "./AddRecipe";
 import SideMenu from "../components/SideMenu/SideMenu";
+import MenuIcon from "@mui/icons-material/Menu";
+import {useResponsive} from "../hooks/responsive";
 
 const EditRecipePage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
+  const responsive = useResponsive('up', 'lg')
+  const [openMenu, setOpenMenu] = useState<boolean>(false)
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -133,20 +137,60 @@ const EditRecipePage: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'flex-start',
       maxHeight: '100%',
-      height: { xs: '50vh', sm: '95vh', md: '100vh' }
+      height: { xs: '50vh', sm: '95vh', lg: '100vh' }
     }}>
-      <Grid item xs={1} sx={{ height: '100%' }}>
-        <SideMenu />
-      </Grid>
+      {responsive ?
+        <Grid item xs={12} lg={1} sx={{height: {xs: '0%', lg: '100%'}}}>
+          <SideMenu />
+        </Grid>
+        :
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            padding: 2,
+            backgroundColor: '#1F1D2B',
+            borderBottomLeftRadius: '16px',
+            borderBottomRightRadius: '16px',
+          }}
+        >
+          <IconButton
+            onClick={() => {setOpenMenu(true)}}
+          >
+            <MenuIcon sx={{color: '#fff'}} />
+          </IconButton>
+          <Drawer
+            open={openMenu}
+            onClose={() => setOpenMenu(false)}
+            PaperProps={{
+              sx: {
+                backgroundColor: 'transparent',
+                width: {
+                  xs: '60%',
+                  sm: '40%',
+                  md: '30%',
+                  lg: '20%'
+                }
+              }
+            }}>
+            <Box sx={{width: '100%', height: '100%'}}>
+              <SideMenu />
+            </Box>
+          </Drawer>
+        </Grid>
+      }
 
-      <Grid item xs={11} sx={{display: 'flex', padding: 10, overflowY: 'scroll', height: '100%',
-        maxHeight: '100%'}}>
+      <Grid item xs={12} lg={11} sx={{display: 'flex', padding: responsive ? 10 : 3, overflowY: responsive ? 'scroll' : 'none', height: '100%',
+        maxHeight: '100%', marginBottom: responsive ? 0 : 4}}>
         <Grid item xs={12} sx={{
           // backgroundColor: '#252836',
           backgroundColor: '#1F1D2B',
           display: 'flex',
           flexDirection: 'column',
-          padding: 12, // 8
+          padding: responsive ? 12 : 2,
           paddingTop: 8,
           paddingBottom: 8,
           borderRadius: '16px',
@@ -154,21 +198,21 @@ const EditRecipePage: React.FC = () => {
         }}>
           <Title variant="h4">Edit Recipe</Title>
           <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column'}}>
-            <FormControl fullWidth sx={{display: 'flex', flexDirection: 'row', columnGap: 4}}>
+            <FormControl fullWidth sx={{display: 'flex', flexDirection: responsive ? 'row' : 'column', columnGap: 4}}>
               <StyledTextField
                 label="Title"
                 name="title"
                 value={recipeData.title}
                 onChange={(e) => handleInputChange(e, 'title')}
                 margin="normal"
-                sx={{width: '60%'}}
+                sx={{width: responsive ? '60%' : '100%'}}
               />
               <StyledTextField
                 label="Category"
                 name="category"
                 value={recipeData.category}
                 onChange={(e) => handleInputChange(e, 'category')}
-                sx={{width: '30%'}}
+                sx={{width: responsive ? '30%' : '100%'}}
                 margin="normal"
               />
               <StyledTextField
@@ -177,7 +221,7 @@ const EditRecipePage: React.FC = () => {
                 type='number'
                 value={recipeData.numberOfPeople}
                 onChange={(e) => handleInputChange(e, 'numberOfPeople')}
-                sx={{width: '10%'}}
+                sx={{width: responsive ? '10%' : '100%'}}
                 margin="normal"
               />
             </FormControl>
@@ -187,7 +231,10 @@ const EditRecipePage: React.FC = () => {
             </Typography>
             {/* Dynamic Fields for Times */}
             {recipeData.times.map((time, index) => (
-              <DynamicField key={index}>
+              <DynamicField key={index} sx={{
+                display: 'flex',
+                flexDirection: responsive ? 'row' : 'column'
+              }}>
                 <StyledTextField
                   label={`Time ${index + 1} Label`}
                   name="label"
@@ -204,8 +251,18 @@ const EditRecipePage: React.FC = () => {
                   fullWidth
                   margin="normal"
                 />
-                <CustomIconButton onClick={() => handleAddField('times')}><AddIcon /></CustomIconButton>
-                <CustomIconButton onClick={() => handleRemoveField('times', index)} disabled={recipeData.times.length === 1}><RemoveIcon /></CustomIconButton>
+                <Box sx={responsive ?
+                  {display: 'flex', flexDirection: 'row', columnGap: 1}
+                  :
+                  {display: 'flex', justifyContent: 'space-between', width: '100%'}
+                }>
+                  <CustomIconButton
+                    sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} }
+                    onClick={() => handleAddField('times')}><AddIcon /></CustomIconButton>
+                  <CustomIconButton
+                    sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} }
+                    onClick={() => handleRemoveField('times', index)} disabled={recipeData.times.length === 1}><RemoveIcon /></CustomIconButton>
+                </Box>
               </DynamicField>
             ))}
 
@@ -214,7 +271,10 @@ const EditRecipePage: React.FC = () => {
             </Typography>
             {/* Dynamic Fields for Ingredients */}
             {recipeData.ingredients.map((ingredient, index) => (
-              <DynamicField key={index}>
+              <DynamicField key={index} sx={{
+                display: 'flex',
+                flexDirection: responsive ? 'row' : 'column'
+              }}>
                 <StyledTextField
                   label={`Ingredient ${index + 1} Quantity`}
                   name="quantity"
@@ -240,8 +300,22 @@ const EditRecipePage: React.FC = () => {
                   fullWidth
                   margin="normal"
                 />
-                <CustomIconButton onClick={() => handleAddField('ingredients')}><AddIcon /></CustomIconButton>
-                <CustomIconButton onClick={() => handleRemoveField('ingredients', index)} disabled={recipeData.ingredients.length === 1}><RemoveIcon /></CustomIconButton>
+                <Box sx={responsive ?
+                  {display: 'flex', flexDirection: 'row', columnGap: 1}
+                  :
+                  {display: 'flex', justifyContent: 'space-between', width: '100%'}
+                }>
+                  <CustomIconButton
+                    sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} }
+                    onClick={() => handleAddField('ingredients')}>
+                    <AddIcon />
+                  </CustomIconButton>
+                  <CustomIconButton
+                    sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} }
+                    onClick={() => handleRemoveField('ingredients', index)} disabled={recipeData.ingredients.length === 1}>
+                    <RemoveIcon />
+                  </CustomIconButton>
+                </Box>
               </DynamicField>
             ))}
 
@@ -250,7 +324,10 @@ const EditRecipePage: React.FC = () => {
             </Typography>
             {/* Dynamic Fields for Steps */}
             {recipeData.steps.map((step, index) => (
-              <DynamicField key={index}>
+              <DynamicField key={index} sx={{
+                display: 'flex',
+                flexDirection: responsive ? 'row' : 'column'
+              }}>
                 <StyledTextField
                   label={`Step ${index + 1}`}
                   name="text"
@@ -259,8 +336,24 @@ const EditRecipePage: React.FC = () => {
                   fullWidth
                   margin="normal"
                 />
-                <CustomIconButton onClick={() => handleAddField('steps')}><AddIcon /></CustomIconButton>
-                <CustomIconButton onClick={() => handleRemoveField('steps', index)} disabled={recipeData.steps.length === 1}><RemoveIcon /></CustomIconButton>
+                <Box sx={responsive ?
+                  {display: 'flex', flexDirection: 'row', columnGap: 1}
+                  :
+                  {display: 'flex', justifyContent: 'space-between', width: '100%'}
+                }>
+                  <CustomIconButton
+                    sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} }
+                    onClick={() => handleAddField('steps')}
+                  >
+                    <AddIcon />
+                  </CustomIconButton>
+                  <CustomIconButton
+                    sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} }
+                    onClick={() => handleRemoveField('steps', index)} disabled={recipeData.steps.length === 1}
+                  >
+                    <RemoveIcon />
+                  </CustomIconButton>
+                </Box>
               </DynamicField>
             ))}
 
