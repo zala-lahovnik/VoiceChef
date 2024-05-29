@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { Recipe } from "../utils/recipeTypes";
 import voiceChefApi from "../utils/axios";
 import {
-  Box,
+  Box, Button, Drawer,
   FormControl,
   Grid, LinearProgress,
   MenuItem,
@@ -16,6 +16,9 @@ import RecipeDisplay from "../components/RecipeDisplay/RecipeDisplay";
 import SideMenu from "../components/SideMenu/SideMenu";
 import './recipes-page.css'
 import SearchIcon from '@mui/icons-material/Search';
+import {useResponsive} from "../hooks/responsive";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from '@mui/icons-material/Menu';
 
 type RecipesPageProps = {}
 
@@ -78,6 +81,8 @@ const HomePage: FC<RecipesPageProps> = () => {
   const navigate = useNavigate();
   const [filteredRecipes, setFilteredRecipes] = useState<Array<Recipe> | null>(null)
   const [searchPrompt, setSearchPrompt] = useState<string>('')
+  const [openMenu, setOpenMenu] = useState<boolean>(false)
+  const responsive = useResponsive('up', 'lg')
 
   
   const fetchRecipes = async () => {
@@ -139,21 +144,68 @@ const HomePage: FC<RecipesPageProps> = () => {
       maxHeight: '100%',
       height: {xs: '50vh', sm: '95vh', md: '100vh'}
     }}>
-      <Grid item xs={1} sx={{height: '100%'}}>
-        <SideMenu />
-      </Grid>
+      {responsive ?
+        <Grid item xs={12} md={1} sx={{height: {xs: '0%', md: '100%'}}}>
+          <SideMenu />
+        </Grid>
+      :
+        <Grid
+          xs={12}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            padding: 2,
+            backgroundColor: '#1F1D2B',
+            borderBottomLeftRadius: '16px',
+            borderBottomRightRadius: '16px',
+          }}
+        >
+          <IconButton
+            onClick={() => {setOpenMenu(true)}}
+          >
+            <MenuIcon sx={{color: '#fff'}} />
+          </IconButton>
+          <Drawer
+            open={openMenu}
+            onClose={() => setOpenMenu(false)}
+            PaperProps={{
+            sx: {
+              backgroundColor: 'transparent',
+              width: {
+                xs: '60%',
+                sm: '40%',
+                md: '30%',
+                lg: '20%'
+              }
+            }
+          }}>
+            <Box sx={{width: '100%', height: '100%'}}>
+              <SideMenu />
+            </Box>
+          </Drawer>
+        </Grid>
+      }
 
-      <Grid item xs={11} sx={{overflowY: 'scroll', height: '100%', paddingBottom: 8, paddingTop: 3}}>
+      <Grid item xs={12} md={11} sx={{
+        overflowY: {xs: 'none', md: 'scroll'},
+        height: '100%',
+        paddingBottom: 8,
+        paddingTop: 3
+      }}>
         <Grid item xs={12} sx={{
           marginBottom: 2,
         }}>
           <Grid item xs={12} sx={{display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
+            flexDirection: responsive ? 'row' : 'column',
+            alignItems: responsive ? 'center' : '',
             justifyContent: 'center',
-            columnGap: 3
+            columnGap: 3,
+            rowGap: 3,
+            paddingLeft: responsive ? 0 : 2,
+            paddingRight: responsive ? 0 : 2,
           }}>
-            <Grid item xs={8}>
+            <Grid item xs={responsive ? 8 : 12}>
               <FormControl fullWidth>
                 <StyledTextField
                   id="search-bar"
@@ -171,7 +223,7 @@ const HomePage: FC<RecipesPageProps> = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={2}>
+            <Grid item xs={responsive ? 2 : 12}>
               <FormControl fullWidth>
                 {/*<WhiteInputLabel id="category-select-label" sx={{ color: 'white' }}>Category</WhiteInputLabel>*/}
                 <WhiteSelect
