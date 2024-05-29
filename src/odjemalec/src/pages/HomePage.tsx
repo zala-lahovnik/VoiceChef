@@ -188,7 +188,7 @@ const HomePage: FC<RecipesPageProps> = () => {
       }
 
       <Grid item xs={12} lg={11} sx={{
-        overflowY: 'scroll',
+        overflowY: responsive ? 'scroll' : 'none',
         height: '100%',
         paddingBottom: 8,
         paddingTop: 3
