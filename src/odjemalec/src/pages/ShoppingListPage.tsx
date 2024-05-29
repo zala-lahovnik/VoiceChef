@@ -156,10 +156,10 @@ const ShoppingListPage: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'flex-start',
       maxHeight: '100%',
-      height: { xs: '50vh', sm: '95vh', md: '100vh' }
+      height: {xs: '50vh', sm: '95vh', lg: '100vh'}
     }}>
       {responsive ?
-        <Grid item xs={12} md={1} sx={{height: {xs: '0%', md: '100%'}}}>
+        <Grid item xs={12} lg={1} sx={{height: {xs: '0%', lg: '100%'}}}>
           <SideMenu />
         </Grid>
         :
@@ -201,13 +201,13 @@ const ShoppingListPage: React.FC = () => {
         </Grid>
       }
 
-      <Grid container xs={12} md={11} sx={{
+      <Grid container xs={12} lg={11} sx={{
         overflowY: responsive ? 'scroll' : 'none',
         height: '100%',
         paddingBottom: 8,
         paddingTop: 3
       }}>
-        <Grid xs={12} md={11} sx={{ height: '100%', paddingBottom: 8, paddingTop: 3, paddingLeft: 2, paddingRight: 2 }}>
+        <Grid xs={12} lg={12} sx={{ height: '100%', paddingBottom: 8, paddingTop: 3, paddingLeft: 2, paddingRight: 2 }}>
           <Grid sx={{
             display: 'flex',
             flexDirection: responsive ? 'row' : 'column',
@@ -218,10 +218,10 @@ const ShoppingListPage: React.FC = () => {
             columnGap: responsive ? 2 : 0,
             paddingTop: responsive ? '150px' : 2
           }}>
-            <Grid item xs={12} md={2.5} sx={{ height: '100%' }}>
+            <Grid item xs={12} lg={2.5} sx={{ height: '100%' }}>
               <SideMenuShops items={items} onStoreSelect={handleStoreSelect} selectedStore={selectedStore} />
             </Grid>
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} lg={8}>
               <ItemTable
                 items={filteredItems}
                 selectedStore={selectedStore}
