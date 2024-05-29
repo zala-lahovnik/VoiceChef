@@ -11,8 +11,7 @@ import AddRecipe from "./pages/AddRecipe";
 import EditRecipePage from './pages/EditRecipePage';
 import PickAndChoosePage from "./pages/PickAndChoosePage";
 import { initKeyboardShortcuts, cleanupKeyboardShortcuts } from './keyboard-shortcuts';
-
-
+import voiceChefApi from "./utils/axios";
 
 const App: React.FC = () => {
   const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
@@ -35,7 +34,7 @@ const App: React.FC = () => {
           },
         });
         setAccessToken(token);
-        sessionStorage.setItem('accessToken', token); // Shranimo dostopni žeton
+        sessionStorage.setItem('accessToken', token); // Save access token
         console.log('Access token:', token);
       } catch (error) {
         console.error('Error getting access token', error);
@@ -46,7 +45,6 @@ const App: React.FC = () => {
       getToken();
     }
   }, [isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently]);
-
 
   useEffect(() => {
     const saveUser = async () => {
@@ -70,21 +68,45 @@ const App: React.FC = () => {
     }
   }, [isAuthenticated, user]);
 
+  const syncOfflineRecipes = async () => {
+    let offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
+    if (offlineRecipes.length > 0) {
+      try {
+        for (let recipe of offlineRecipes) {
+          await voiceChefApi.post('/recipes', recipe);
+        }
+        localStorage.removeItem('offlineRecipes');
+        console.log('Offline recipes synced successfully');
+      } catch (error) {
+        console.error('Error syncing offline recipes', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (navigator.onLine) {
+      syncOfflineRecipes();
+    } else {
+      window.addEventListener('online', syncOfflineRecipes);
+      return () => window.removeEventListener('online', syncOfflineRecipes);
+    }
+  }, []);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/recipe/:id" element={<SingleRecipePage />} />
-          <Route path="/recipes" element={<RecipesPage />} />
-          <Route path="/shopping-list" element={<ShoppingListPage />} />
-          <Route path="/add-recipe" element={<AddRecipe />} />
-          <Route path="/edit-recipe/:id" element={<EditRecipePage />} />
-          <Route path="/pick-and-choose" element={<PickAndChoosePage />} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/recipe/:id" element={<SingleRecipePage />} />
+        <Route path="/recipes" element={<RecipesPage />} />
+        <Route path="/shopping-list" element={<ShoppingListPage />} />
+        <Route path="/add-recipe" element={<AddRecipe />} />
+        <Route path="/edit-recipe/:id" element={<EditRecipePage />} />
+        <Route path="/pick-and-choose" element={<PickAndChoosePage />} />
+      </Routes>
     </Router>
   );
 };
