@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, IconButton, Typography, ButtonBase } from "@mui/material";
+import {Grid, IconButton, Typography, ButtonBase, Box} from "@mui/material";
 import { Item } from "../../utils/itemTypes";
 import BalanceRoundedIcon from '@mui/icons-material/BalanceRounded';
 import AgricultureRoundedIcon from '@mui/icons-material/AgricultureRounded';
@@ -92,8 +92,10 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
             borderBottomLeftRadius: '16px',
             justifyContent: 'left',
           }}>
-            <ButtonBase
+            <Grid
               sx={{
+                display: 'flex',
+                flexDirection: 'row',
                 borderRadius: '8px',
                 backgroundColor: 'transparent',
                 '&:hover': {
@@ -124,7 +126,7 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
               >
                 Uncategorized ({uncategorized})
               </Typography>
-            </ButtonBase>
+            </Grid>
           </Grid>
         </Grid>
 
@@ -145,8 +147,10 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
             borderBottomLeftRadius: '16px',
             justifyContent: 'left',
           }}>
-            <ButtonBase
+            <Grid
               sx={{
+                display: 'flex',
+                flexDirection: 'row',
                 borderRadius: '8px',
                 backgroundColor: 'transparent',
                 '&:hover': {
@@ -177,7 +181,7 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
               >
                 All ({all})
               </Typography>
-            </ButtonBase>
+            </Grid>
           </Grid>
         </Grid>
 
@@ -199,8 +203,10 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
               borderBottomLeftRadius: '16px',
               justifyContent: 'left',
             }}>
-              <ButtonBase
+              <Grid
                 sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
                   borderRadius: '8px',
                   backgroundColor: 'transparent',
                   '&:hover': {
@@ -231,7 +237,7 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
                 >
                   {store} ({stores[store]})
                 </Typography>
-              </ButtonBase>
+              </Grid>
             </Grid>
           </Grid>
         ))}
