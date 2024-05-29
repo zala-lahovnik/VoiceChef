@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Grid } from "@mui/material";
+import {Box, Drawer, Grid} from "@mui/material";
 import voiceChefApi from '../utils/axios';
 import { Item } from "../utils/itemTypes";
 import { useNavigate } from "react-router-dom";
 import SideMenu from '../components/SideMenu/SideMenu';
 import SideMenuShops from '../components/SideMenuShops/SideMenuShops';
 import ItemTable from '../components/ItemDisplay/ItemTable';
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import {useResponsive} from "../hooks/responsive";
 
 const ShoppingListPage: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
@@ -19,6 +22,9 @@ const ShoppingListPage: React.FC = () => {
   const [newItemName, setNewItemName] = useState<string>(''); // New item name
   const [newItemQuantity, setNewItemQuantity] = useState<number>(0); // New item quantity
   const [newItemUnit, setNewItemUnit] = useState<string>(''); // New item unit
+
+  const [openMenu, setOpenMenu] = useState<boolean>(false)
+  const responsive = useResponsive('up', 'lg')
 
   const navigate = useNavigate();
 
@@ -152,25 +158,70 @@ const ShoppingListPage: React.FC = () => {
       maxHeight: '100%',
       height: { xs: '50vh', sm: '95vh', md: '100vh' }
     }}>
-      <Grid item xs={1} sx={{ height: '100%' }}>
-        <SideMenu />
-      </Grid>
-      <Grid container xs={11} sx={{ overflowY: 'scroll', height: '100%', paddingBottom: 8, paddingTop: 3 }}>
-        <Grid xs={11} sx={{ height: '100%', paddingBottom: 8, paddingTop: 3, paddingLeft: 2, paddingRight: 2 }}>
-          <Grid sx={{
+      {responsive ?
+        <Grid item xs={12} md={1} sx={{height: {xs: '0%', md: '100%'}}}>
+          <SideMenu />
+        </Grid>
+        :
+        <Grid
+          xs={12}
+          sx={{
             display: 'flex',
             flexDirection: 'row',
+            justifyContent: 'flex-start',
+            padding: 2,
+            backgroundColor: '#1F1D2B',
+            borderBottomLeftRadius: '16px',
+            borderBottomRightRadius: '16px',
+          }}
+        >
+          <IconButton
+            onClick={() => {setOpenMenu(true)}}
+          >
+            <MenuIcon sx={{color: '#fff'}} />
+          </IconButton>
+          <Drawer
+            open={openMenu}
+            onClose={() => setOpenMenu(false)}
+            PaperProps={{
+              sx: {
+                backgroundColor: 'transparent',
+                width: {
+                  xs: '60%',
+                  sm: '40%',
+                  md: '30%',
+                  lg: '20%'
+                }
+              }
+            }}>
+            <Box sx={{width: '100%', height: '100%'}}>
+              <SideMenu />
+            </Box>
+          </Drawer>
+        </Grid>
+      }
+
+      <Grid container xs={12} md={11} sx={{
+        overflowY: responsive ? 'scroll' : 'none',
+        height: '100%',
+        paddingBottom: 8,
+        paddingTop: 3
+      }}>
+        <Grid xs={12} md={11} sx={{ height: '100%', paddingBottom: 8, paddingTop: 3, paddingLeft: 2, paddingRight: 2 }}>
+          <Grid sx={{
+            display: 'flex',
+            flexDirection: responsive ? 'row' : 'column',
             justifyContent: 'space-evenly',
             paddingLeft: '5%',
             paddingRight: '5%',
-            rowGap: 15,
-            columnGap: 2,
-            paddingTop: '150px'
+            rowGap: responsive ? 15 : 3,
+            columnGap: responsive ? 2 : 0,
+            paddingTop: responsive ? '150px' : 2
           }}>
-            <Grid item xs={2.5} sx={{ height: '100%' }}>
+            <Grid item xs={12} md={2.5} sx={{ height: '100%' }}>
               <SideMenuShops items={items} onStoreSelect={handleStoreSelect} selectedStore={selectedStore} />
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={12} md={8}>
               <ItemTable
                 items={filteredItems}
                 selectedStore={selectedStore}
