@@ -163,7 +163,7 @@ const ShoppingListPage: React.FC = () => {
           <SideMenu />
         </Grid>
         :
-        <Grid
+        <Grid item
           xs={12}
           sx={{
             display: 'flex',
@@ -201,13 +201,13 @@ const ShoppingListPage: React.FC = () => {
         </Grid>
       }
 
-      <Grid container xs={12} lg={11} sx={{
+      <Grid item xs={12} lg={11} sx={{
         overflowY: responsive ? 'scroll' : 'none',
         height: '100%',
         paddingBottom: 8,
         paddingTop: 3
       }}>
-        <Grid xs={12} lg={12} sx={{ height: '100%', paddingBottom: 8, paddingTop: 3, paddingLeft: 2, paddingRight: 2 }}>
+        <Grid item xs={12} lg={12} sx={{ height: '100%', paddingBottom: 8, paddingTop: 3, paddingLeft: 2, paddingRight: 2 }}>
           <Grid sx={{
             display: 'flex',
             flexDirection: responsive ? 'row' : 'column',
