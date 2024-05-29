@@ -239,7 +239,7 @@ const HomePage: FC<RecipesPageProps> = () => {
                   </MenuItem>
                   {categories.map((categoryItem: string) => {
                     return (
-                      <MenuItem value={categoryItem}>
+                      <MenuItem key={categoryItem} value={categoryItem}>
                         {categoryItem}
                       </MenuItem>
                     )
