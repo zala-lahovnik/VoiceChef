@@ -6,31 +6,35 @@ import {
   Grid,
   TextField,
   Typography,
-  IconButton
+  IconButton, Drawer, Box
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { styled } from '@mui/system';
-import voiceChefApi from '../utils/axios'; // Import the existing Axios instance
+import voiceChefApi from '../utils/axios';
 import './AddRecipe.css';
+import SideMenu from "../components/SideMenu/SideMenu";
+import {StyledTextField} from "./HomePage";
+import MenuIcon from "@mui/icons-material/Menu";
+import {useResponsive} from "../hooks/responsive";
 
-interface Time {
+export interface Time {
   label: string;
   time: string;
 }
 
-interface Ingredient {
+export interface Ingredient {
   quantity: number;
   unit: string;
   description: string;
 }
 
-interface Step {
+export interface Step {
   step: number;
   text: string;
 }
 
-interface RecipeData {
+export interface RecipeData {
   title: string;
   category: string;
   times: Time[];
@@ -40,61 +44,35 @@ interface RecipeData {
   img: string;
 }
 
-const Container = styled(Grid)({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: '100vh',
-  backgroundColor: '#2D303E',
-  color: 'white',
-});
-
-const Form = styled(Grid)({
-  backgroundColor: '#393C49',
-  padding: '20px',
-  borderRadius: '16px',
-  boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.5)',
-});
-
-const Title = styled(Typography)({
+export const Title = styled(Typography)({
   textAlign: 'center',
   marginBottom: '20px',
-  color: '#c17c37',
+  color: '#fff',
 });
 
-const CustomTextField = styled(TextField)({
-  '& .MuiInputBase-input': {
-    color: 'white',
-  },
-  '& .MuiInputLabel-root': {
-    color: 'white',
-  },
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderColor: 'white',
-    },
-    '&:hover fieldset': {
-      borderColor: 'white',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: 'white',
-    },
-  },
-});
-
-const CustomButton = styled(Button)({
-  backgroundColor: '#c17c37',
+export const CustomButton = styled(Button)({
+  backgroundColor: '#d17a22',
   color: 'white',
+  borderRadius: '16px',
+  padding: '8px 12px',
+  width: 'fit-content',
+  alignSelf: 'center',
   '&:hover': {
     backgroundColor: '#b56929',
+    filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
   },
 });
 
-const CustomIconButton = styled(IconButton)({
-  color: '#c17c37',
+export const CustomIconButton = styled(IconButton)({
+  color: '#fff',
+  backgroundColor: '#d17a22',
+  '&:hover': {
+    backgroundColor: '#b56929',
+    filter: 'drop-shadow(0px 8px 24px rgba(234, 124, 105, 0.32))'
+  },
 });
 
-const DynamicField = styled('div')({
+export const DynamicField = styled('div')({
   display: 'flex',
   alignItems: 'center',
   gap: '10px',
@@ -112,6 +90,8 @@ const AddRecipe: React.FC = () => {
     steps: [{ step: 1, text: '' }],
     img: ''
   });
+  const [openMenu, setOpenMenu] = useState<boolean>(false)
+  const responsive = useResponsive('up', 'lg')
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -153,148 +133,246 @@ const AddRecipe: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await voiceChefApi.post('/recipes', recipeData);
-      navigate('/');
+      await voiceChefApi.post('/recipes', recipeData); // Send the form data to the backend
+      navigate('/'); // Navigate to the home page after successful submission
     } catch (error) {
       console.error('Error adding recipe', error);
-      saveRecipeOffline(recipeData);
-      navigate('/');
     }
   };
-  
-  const saveRecipeOffline = (recipeData: RecipeData) => {
-    let offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
-    offlineRecipes.push(recipeData);
-    localStorage.setItem('offlineRecipes', JSON.stringify(offlineRecipes));
-    alert('Recipe saved locally. It will be synced when you go back online.');
-  };  
 
   return (
-    <Container container>
-      <Form item xs={12} md={8}>
-        <Title variant="h4">Add a New Recipe</Title>
-        <form onSubmit={handleSubmit}>
-          <FormControl fullWidth>
-            <CustomTextField
-              label="Title"
-              name="title"
-              value={recipeData.title}
-              onChange={(e) => handleInputChange(e, 'title')}
-              fullWidth
-              margin="normal"
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <CustomTextField
-              label="Category"
-              name="category"
-              value={recipeData.category}
-              onChange={(e) => handleInputChange(e, 'category')}
-              fullWidth
-              margin="normal"
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <CustomTextField
-              label="Number of People"
-              name="numberOfPeople"
-              value={recipeData.numberOfPeople}
-              onChange={(e) => handleInputChange(e, 'numberOfPeople')}
-              fullWidth
-              margin="normal"
-            />
-          </FormControl>
+    <Grid container sx={{
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      maxHeight: '100%',
+      height: { xs: '100%', sm: '100%', md: '100vh' }
+    }}>
+      {responsive ?
+        <Grid item xs={12} md={1} sx={{height: {xs: '0%', md: '100%'}}}>
+          <SideMenu />
+        </Grid>
+        :
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            padding: 2,
+            backgroundColor: '#1F1D2B',
+            borderBottomLeftRadius: '16px',
+            borderBottomRightRadius: '16px',
+          }}
+        >
+          <IconButton
+            onClick={() => {setOpenMenu(true)}}
+          >
+            <MenuIcon sx={{color: '#fff'}} />
+          </IconButton>
+          <Drawer
+            open={openMenu}
+            onClose={() => setOpenMenu(false)}
+            PaperProps={{
+              sx: {
+                backgroundColor: 'transparent',
+                width: {
+                  xs: '60%',
+                  sm: '40%',
+                  md: '30%',
+                  lg: '20%'
+                }
+              }
+            }}>
+            <Box sx={{width: '100%', height: '100%'}}>
+              <SideMenu />
+            </Box>
+          </Drawer>
+        </Grid>
+      }
 
-          {/* Dynamic Fields for Times */}
-          {recipeData.times.map((time, index) => (
-            <DynamicField key={index}>
-              <CustomTextField
-                label={`Time ${index + 1} Label`}
-                name="label"
-                value={time.label}
-                onChange={(e) => handleInputChange(e, 'times', index, 'label')}
-                fullWidth
+      <Grid item xs={12} md={11} sx={{
+        display: 'flex',
+        padding: responsive ? 10 : 2,
+        overflowY: responsive ? 'scroll' : 'none',
+        height: '100%',
+        maxHeight: '100%'
+      }}>
+        <Grid item xs={12} sx={{
+          // backgroundColor: '#252836',
+          backgroundColor: '#1F1D2B',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: responsive ? 12 : 2,
+          paddingTop: 8,
+          paddingBottom: 8,
+          borderRadius: '16px',
+          height: 'fit-content'
+        }}>
+          <Title variant="h4">Add a New Recipe</Title>
+          <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column'}}>
+            <FormControl fullWidth sx={{
+              display: 'flex',
+              flexDirection: responsive ? 'row' : 'column',
+              columnGap: 4
+            }}>
+              <StyledTextField
+                label="Title"
+                name="title"
+                value={recipeData.title}
+                onChange={(e) => handleInputChange(e, 'title')}
+                margin="normal"
+                sx={{width: responsive ? '60%' : '100%'}}
+              />
+              <StyledTextField
+                label="Category"
+                name="category"
+                value={recipeData.category}
+                onChange={(e) => handleInputChange(e, 'category')}
+                sx={{width: responsive ? '30%' : '100%'}}
                 margin="normal"
               />
-              <CustomTextField
-                label={`Time ${index + 1}`}
-                name="time"
-                value={time.time}
-                onChange={(e) => handleInputChange(e, 'times', index, 'time')}
-                fullWidth
-                margin="normal"
-              />
-              <CustomIconButton onClick={() => handleAddField('times')}><AddIcon /></CustomIconButton>
-              <CustomIconButton onClick={() => handleRemoveField('times', index)} disabled={recipeData.times.length === 1}><RemoveIcon /></CustomIconButton>
-            </DynamicField>
-          ))}
-
-          {/* Dynamic Fields for Ingredients */}
-          {recipeData.ingredients.map((ingredient, index) => (
-            <DynamicField key={index}>
-              <CustomTextField
-                label={`Ingredient ${index + 1} Quantity`}
-                name="quantity"
+              <StyledTextField
+                label="Number of People"
+                name="numberOfPeople"
                 type="number"
-                value={ingredient.quantity}
-                onChange={(e) => handleInputChange(e, 'ingredients', index, 'quantity')}
-                fullWidth
+                value={recipeData.numberOfPeople}
+                onChange={(e) => handleInputChange(e, 'numberOfPeople')}
+                sx={{width: responsive ? '10%' : '100%'}}
                 margin="normal"
               />
-              <CustomTextField
-                label={`Ingredient ${index + 1} Unit`}
-                name="unit"
-                value={ingredient.unit}
-                onChange={(e) => handleInputChange(e, 'ingredients', index, 'unit')}
-                fullWidth
-                margin="normal"
-              />
-              <CustomTextField
-                label={`Ingredient ${index + 1} Description`}
-                name="description"
-                value={ingredient.description}
-                onChange={(e) => handleInputChange(e, 'ingredients', index, 'description')}
-                fullWidth
-                margin="normal"
-              />
-              <CustomIconButton onClick={() => handleAddField('ingredients')}><AddIcon /></CustomIconButton>
-              <CustomIconButton onClick={() => handleRemoveField('ingredients', index)} disabled={recipeData.ingredients.length === 1}><RemoveIcon /></CustomIconButton>
-            </DynamicField>
-          ))}
+            </FormControl>
 
-          {/* Dynamic Fields for Steps */}
-          {recipeData.steps.map((step, index) => (
-            <DynamicField key={index}>
-              <CustomTextField
-                label={`Step ${index + 1}`}
-                name="text"
-                value={step.text}
-                onChange={(e) => handleInputChange(e, 'steps', index, 'text')}
+            <Typography variant={'h5'} sx={{paddingTop: 2}}>
+              Food preparation times
+            </Typography>
+            {recipeData.times.map((time, index) => (
+              <DynamicField key={index} sx={{
+                display: 'flex',
+                flexDirection: responsive ? 'row' : 'column'
+              }}>
+                <StyledTextField
+                  label={`Time ${index + 1} Label`}
+                  name="label"
+                  value={time.label}
+                  onChange={(e) => handleInputChange(e, 'times', index, 'label')}
+                  fullWidth
+                  margin="normal"
+                />
+                <StyledTextField
+                  label={`Time ${index + 1}`}
+                  name="time"
+                  value={time.time}
+                  onChange={(e) => handleInputChange(e, 'times', index, 'time')}
+                  fullWidth
+                  margin="normal"
+                />
+                <Box sx={responsive ?
+                  {display: 'flex', flexDirection: 'row', columnGap: 1}
+                  :
+                  {display: 'flex', justifyContent: 'space-between', width: '100%'}
+                }>
+                  <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleAddField('times')}><AddIcon /></CustomIconButton>
+                  <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleRemoveField('times', index)}><RemoveIcon /></CustomIconButton>
+                </Box>
+              </DynamicField>
+            ))}
+
+            <Typography variant={'h5'} sx={{paddingTop: 2}}>
+              Ingredients needed
+            </Typography>
+            {recipeData.ingredients.map((ingredient, index) => (
+              <DynamicField key={index} sx={{
+                display: 'flex',
+                flexDirection: responsive ? 'row' : 'column'
+              }}>
+                <StyledTextField
+                  label={`Ingredient ${index + 1} Quantity`}
+                  name="quantity"
+                  type="number"
+                  value={ingredient.quantity}
+                  onChange={(e) => handleInputChange(e, 'ingredients', index, 'quantity')}
+                  fullWidth
+                  margin="normal"
+                />
+                <StyledTextField
+                  label={`Ingredient ${index + 1} Unit`}
+                  name="unit"
+                  value={ingredient.unit}
+                  onChange={(e) => handleInputChange(e, 'ingredients', index, 'unit')}
+                  fullWidth
+                  margin="normal"
+                />
+                <StyledTextField
+                  label={`Ingredient ${index + 1} Description`}
+                  name="description"
+                  value={ingredient.description}
+                  onChange={(e) => handleInputChange(e, 'ingredients', index, 'description')}
+                  fullWidth
+                  margin="normal"
+                />
+                <Box sx={responsive ?
+                  {display: 'flex', flexDirection: 'row', columnGap: 1}
+                  :
+                  {display: 'flex', justifyContent: 'space-between', width: '100%'}
+                }>
+                  <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleAddField('ingredients')}><AddIcon /></CustomIconButton>
+                  <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleRemoveField('ingredients', index)}><RemoveIcon /></CustomIconButton>
+                </Box>
+              </DynamicField>
+            ))}
+
+            <Typography variant={'h5'} sx={{paddingTop: 2}}>
+              Recipe steps
+            </Typography>
+            {recipeData.steps.map((step, index) => (
+              <DynamicField key={index} sx={{
+                display: 'flex',
+                flexDirection: responsive ? 'row' : 'column'
+              }}>
+                <StyledTextField
+                  label={`Step ${index + 1}`}
+                  name="text"
+                  value={step.text}
+                  onChange={(e) => handleInputChange(e, 'steps', index, 'text')}
+                  fullWidth
+                  margin="normal"
+                />
+                <Box sx={responsive ?
+                  {display: 'flex', flexDirection: 'row', columnGap: 1}
+                  :
+                  {display: 'flex', justifyContent: 'space-between', width: '100%'}
+                }>
+                  <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleAddField('steps')}><AddIcon /></CustomIconButton>
+                  <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleRemoveField('steps', index)}><RemoveIcon /></CustomIconButton>
+                </Box>
+              </DynamicField>
+            ))}
+
+            <Typography variant={'h5'} sx={{paddingTop: 2}}>
+              URL of dish image
+            </Typography>
+            <FormControl fullWidth>
+              <StyledTextField
+                label="Image URL"
+                name="img"
+                value={recipeData.img}
+                onChange={(e) => handleInputChange(e, 'img')}
                 fullWidth
                 margin="normal"
+                sx={{marginBottom: 4}}
               />
-              <CustomIconButton onClick={() => handleAddField('steps')}><AddIcon /></CustomIconButton>
-              <CustomIconButton onClick={() => handleRemoveField('steps', index)} disabled={recipeData.steps.length === 1}><RemoveIcon /></CustomIconButton>
-            </DynamicField>
-          ))}
+            </FormControl>
 
-          <FormControl fullWidth>
-            <CustomTextField
-              label="Image URL"
-              name="img"
-              value={recipeData.img}
-              onChange={(e) => handleInputChange(e, 'img')}
-              fullWidth
-              margin="normal"
-            />
-          </FormControl>
-
-          <CustomButton type="submit" variant="contained" fullWidth>
-            Add Recipe
-          </CustomButton>
-        </form>
-      </Form>
-    </Container>
+            <CustomButton type="submit" variant="contained" fullWidth sx={{fontWeight: 700}}>
+              Add Recipe
+            </CustomButton>
+          </form>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 
