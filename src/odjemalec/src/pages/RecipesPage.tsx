@@ -1,4 +1,4 @@
-import {Grid, Typography, Button, Box, Modal, Paper, TextField, DialogActions} from "@mui/material";
+import {Grid, Typography, Button, Box, Modal, Paper, TextField, DialogActions, Drawer} from "@mui/material";
 import SideMenu from "../components/SideMenu/SideMenu";
 import React, { useEffect, useState } from "react";
 import { Recipe } from "../utils/recipeTypes";
@@ -8,12 +8,16 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import {useResponsive} from "../hooks/responsive";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const RecipesPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const navigate = useNavigate();
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | null>(null)
+  const responsive = useResponsive('up', 'lg')
+  const [openMenu, setOpenMenu] = useState<boolean>(false)
 
   const fetchRecipes = async () => {
     try {
@@ -56,19 +60,59 @@ const RecipesPage = () => {
       justifyContent: 'center',
       alignItems: 'flex-start',
       maxHeight: '100%',
-      height: { xs: '50vh', sm: '95vh', md: '100vh' }
+      height: { xs: '100%', sm: '100%', md: '100vh' }
     }}>
-      <Grid item xs={1} sx={{ height: '100%' }}>
-        <SideMenu />
-      </Grid>
+      {responsive ?
+        <Grid item xs={12} md={1} sx={{height: {xs: '0%', md: '100%'}}}>
+          <SideMenu />
+        </Grid>
+        :
+        <Grid
+          xs={12}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            padding: 2,
+            backgroundColor: '#1F1D2B',
+            borderBottomLeftRadius: '16px',
+            borderBottomRightRadius: '16px',
+          }}
+        >
+          <IconButton
+            onClick={() => {setOpenMenu(true)}}
+          >
+            <MenuIcon sx={{color: '#fff'}} />
+          </IconButton>
+          <Drawer
+            open={openMenu}
+            onClose={() => setOpenMenu(false)}
+            PaperProps={{
+              sx: {
+                backgroundColor: 'transparent',
+                width: {
+                  xs: '60%',
+                  sm: '40%',
+                  md: '30%',
+                  lg: '20%'
+                }
+              }
+            }}>
+            <Box sx={{width: '100%', height: '100%'}}>
+              <SideMenu />
+            </Box>
+          </Drawer>
+        </Grid>
+      }
 
-      <Grid item xs={11} sx={{
-        overflowY: 'scroll',
+      <Grid item xs={12} md={11} sx={{
+        overflowY: responsive ? 'scroll' : 'none',
         height: '100%',
-        padding: 10,
+        padding: responsive ? 10 : 2,
         maxHeight: '100%',
+        marginBottom: 2
       }}>
-        <Grid sx={{backgroundColor: '#1F1D2B', padding: 10, borderRadius: '16px' }}>
+        <Grid sx={{backgroundColor: '#1F1D2B', padding: responsive ? 10 : 3, borderRadius: '16px' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <Typography variant="h4">
               Recipe List
@@ -83,7 +127,7 @@ const RecipesPage = () => {
               }}
               onClick={handleAddNewRecipe}
             >
-              <AddIcon sx={{fontSize: '36px'}} />
+              <AddIcon sx={{fontSize: responsive ? '36px' : '24px'}} />
             </IconButton>
           </Box>
 
@@ -93,16 +137,17 @@ const RecipesPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                columnGap: 2
               }}>
                 <Typography
                   onClick={() => {navigate(`/recipe/${recipe._id}`)}}
-                  variant="h6"
-                  sx={{cursor: 'pointer'}}
+                  variant={responsive ? 'h6': 'subtitle1'}
+                  sx={{cursor: 'pointer', }}
                 >
                   {recipe.title}
                 </Typography>
 
-                <Box>
+                <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
                   <IconButton
                     sx={{
                       backgroundColor: '#d17a22',
