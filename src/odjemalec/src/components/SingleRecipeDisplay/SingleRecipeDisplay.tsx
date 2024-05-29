@@ -5,6 +5,7 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import IconButton from '@mui/material/IconButton';
 import KitchenRoundedIcon from '@mui/icons-material/KitchenRounded';
+import {useResponsive} from "../../hooks/responsive";
 
 
 type RecipeDisplayProps = {
@@ -15,6 +16,8 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
   const [listening, setListening] = useState(false);
   const [recognition, setRecognition] = useState(null);
   const [currentStep, setCurrentStep] = useState<number>(0)
+  const responsive = useResponsive('up', 'lg')
+  const [openMenu, setOpenMenu] = useState<boolean>(false)
 
   useEffect(() => {
     Notification.requestPermission();
@@ -140,15 +143,15 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
   };
 
   return (
-    <Grid container sx={{display: 'flex', padding: 10}}>
+    <Grid container sx={{display: 'flex', padding: responsive ? 10 : 2}}>
       <Grid item xs={12} sx={{
-        // backgroundColor: '#252836',
         backgroundColor: '#1F1D2B',
         display: 'flex',
-        flexDirection: 'row',
-        padding: 12, // 8
+        flexDirection: responsive ? 'row' : 'column',
+        padding: responsive ? 12 : 0,
         borderRadius: '16px',
-        columnGap: 8
+        columnGap: responsive ? 8 : 0,
+        marginTop: responsive ? 0 : 6
       }}>
         <Grid item xs={12} sm={12} md={12} lg={4}
           sx={{
@@ -198,11 +201,11 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
             <Typography sx={{fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, fontSize: '18px'}}>
               Sestavine:
             </Typography>
-            <List sx={{ listStyleType: 'disc' }}>
+            <List sx={{ listStyleType: 'disc', width: '100%' }}>
               {recipe.ingredients.map((ingredientItem: RecipeIngredient) => {
                 return (
                   <Grid key={ingredientItem._id} item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 2}}>
-                    <Grid item xs={9} sx={{display: 'flex', flexDirection: 'row', columnGap: 2}}>
+                    <Grid item xs={12} lg={9} sx={{display: 'flex', flexDirection: 'row', columnGap: 2}}>
                       <KitchenRoundedIcon sx={{color: '#fff'}} />
 
                       <Typography>
@@ -210,7 +213,7 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
                       </Typography>
                     </Grid>
 
-                    <Grid item xs={3}>
+                    <Grid item xs={12} lg={3}>
                       <Typography sx={{textAlign: 'right'}}>
                         {ingredientItem.quantity ? ingredientItem.quantity + ' ' + ingredientItem.unit : ''}
                       </Typography>
@@ -223,7 +226,7 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
         </Grid>
 
 
-        <Grid item xs={12} md={8} sx={{
+        <Grid item xs={12} lg={8} sx={{
           padding: 3,
           borderRadius: '16px',
         }}>

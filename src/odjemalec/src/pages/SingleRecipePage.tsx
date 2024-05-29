@@ -3,8 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import SingleRecipeDisplay from "../components/SingleRecipeDisplay/SingleRecipeDisplay";
 import { Recipe } from "../utils/recipeTypes";
 import voiceChefApi from "../utils/axios";
-import { Grid, Button, Box } from "@mui/material";
+import {Grid, Button, Box, Drawer} from "@mui/material";
 import SideMenu from "../components/SideMenu/SideMenu";
+import {useResponsive} from "../hooks/responsive";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
 
 type SingleRecipePageProps = {}
 
@@ -13,6 +16,8 @@ const SingleRecipePage: FC<SingleRecipePageProps> = () => {
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [recipes, setRecipes] = useState<Array<Recipe> | null>(null);
+  const responsive = useResponsive('up', 'lg')
+  const [openMenu, setOpenMenu] = useState<boolean>(false)
 
   const fetchRecipes = async () => {
     const result = await voiceChefApi.get('/recipes');
@@ -46,12 +51,52 @@ const SingleRecipePage: FC<SingleRecipePageProps> = () => {
       justifyContent: 'center',
       alignItems: 'flex-start',
       maxHeight: '100%',
-      height: { xs: '50vh', sm: '95vh', md: '100vh' }
+      height: { xs: '50vh', sm: '95vh', lg: '100vh' }
     }}>
-      <Grid item xs={1} sx={{ height: '100%' }}>
-        <SideMenu />
-      </Grid>
-      <Grid item xs={11} sx={{ overflowY: 'scroll', height: '100%', paddingBottom: 8, paddingTop: 3 }}>
+      {responsive ?
+        <Grid item xs={12} lg={1} sx={{height: {xs: '0%', lg: '100%'}}}>
+          <SideMenu />
+        </Grid>
+        :
+        <Grid
+          xs={12}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            padding: 2,
+            backgroundColor: '#1F1D2B',
+            borderBottomLeftRadius: '16px',
+            borderBottomRightRadius: '16px',
+          }}
+        >
+          <IconButton
+            onClick={() => {setOpenMenu(true)}}
+          >
+            <MenuIcon sx={{color: '#fff'}} />
+          </IconButton>
+          <Drawer
+            open={openMenu}
+            onClose={() => setOpenMenu(false)}
+            PaperProps={{
+              sx: {
+                backgroundColor: 'transparent',
+                width: {
+                  xs: '60%',
+                  sm: '40%',
+                  md: '30%',
+                  lg: '20%'
+                }
+              }
+            }}>
+            <Box sx={{width: '100%', height: '100%'}}>
+              <SideMenu />
+            </Box>
+          </Drawer>
+        </Grid>
+      }
+
+      <Grid item xs={12} lg={11} sx={{ overflowY: responsive ? 'scroll' : 'none', height: '100%', paddingBottom: 8, paddingTop: 3 }}>
         {recipe && (
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
             <SingleRecipeDisplay key={recipe._id} recipe={recipe} />
