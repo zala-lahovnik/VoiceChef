@@ -248,7 +248,7 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
                 }}
                 sx={{width: responsive ? '39%' : '100%'}}
               />
-              <Grid sx={{width: '100%'}}>
+              <Grid sx={{width: responsive ? 'auto' : '100%'}}>
                 <IconButton
                   sx={{
                     backgroundColor: '#d17a22',
