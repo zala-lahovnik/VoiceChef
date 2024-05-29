@@ -126,7 +126,7 @@ const EditRecipePage: React.FC = () => {
     subField?: string
   ) => {
     if (!recipeData) return;
-    const { name, value } = e.target;
+    const { value } = e.target;
     setRecipeData((prevData) => {
       if (!prevData) return prevData;
       if (index !== undefined && subField) {
@@ -166,12 +166,22 @@ const EditRecipePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!recipeData) return;
     try {
       await voiceChefApi.put(`/recipes/${id}`, recipeData);
       navigate('/'); // Navigate to the home page after successful update
     } catch (error) {
       console.error('Error updating recipe', error);
+      saveRecipeOffline(recipeData);
+      navigate('/'); // Navigate to the home page after saving offline
     }
+  };
+
+  const saveRecipeOffline = (recipeData: RecipeData) => {
+    let offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
+    offlineRecipes.push(recipeData);
+    localStorage.setItem('offlineRecipes', JSON.stringify(offlineRecipes));
+    alert('Recipe update saved locally. It will be synced when you go back online.');
   };
 
   if (!recipeData) {

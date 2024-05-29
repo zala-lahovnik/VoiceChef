@@ -153,12 +153,21 @@ const AddRecipe: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await voiceChefApi.post('/recipes', recipeData); // Send the form data to the backend
-      navigate('/'); // Navigate to the home page after successful submission
+      await voiceChefApi.post('/recipes', recipeData);
+      navigate('/');
     } catch (error) {
       console.error('Error adding recipe', error);
+      saveRecipeOffline(recipeData);
+      navigate('/');
     }
   };
+  
+  const saveRecipeOffline = (recipeData: RecipeData) => {
+    let offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
+    offlineRecipes.push(recipeData);
+    localStorage.setItem('offlineRecipes', JSON.stringify(offlineRecipes));
+    alert('Recipe saved locally. It will be synced when you go back online.');
+  };  
 
   return (
     <Container container>
