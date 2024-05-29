@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -90,8 +90,30 @@ const AddRecipe: React.FC = () => {
     steps: [{ step: 1, text: '' }],
     img: ''
   });
-  const [openMenu, setOpenMenu] = useState<boolean>(false)
-  const responsive = useResponsive('up', 'lg')
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const responsive = useResponsive('up', 'lg');
+
+  useEffect(() => {
+    const syncOfflineRecipes = async () => {
+      const offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
+      if (offlineRecipes.length > 0) {
+        for (const recipe of offlineRecipes) {
+          try {
+            await voiceChefApi.post('/recipes', recipe);
+          } catch (error) {
+            console.error('Error syncing recipe', error);
+          }
+        }
+        localStorage.removeItem('offlineRecipes');
+        alert('Offline recipes synced successfully!');
+      }
+    };
+
+    window.addEventListener('online', syncOfflineRecipes);
+    return () => {
+      window.removeEventListener('online', syncOfflineRecipes);
+    };
+  }, []);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -133,11 +155,20 @@ const AddRecipe: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await voiceChefApi.post('/recipes', recipeData); // Send the form data to the backend
-      navigate('/'); // Navigate to the home page after successful submission
+      await voiceChefApi.post('/recipes', recipeData);
+      navigate('/');
     } catch (error) {
       console.error('Error adding recipe', error);
+      saveRecipeOffline(recipeData);
+      navigate('/');
     }
+  };
+
+  const saveRecipeOffline = (recipeData: RecipeData) => {
+    let offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
+    offlineRecipes.push(recipeData);
+    localStorage.setItem('offlineRecipes', JSON.stringify(offlineRecipes));
+    alert('Recipe saved locally. It will be synced when you go back online.');
   };
 
   return (
@@ -201,7 +232,6 @@ const AddRecipe: React.FC = () => {
         maxHeight: '100%'
       }}>
         <Grid item xs={12} sx={{
-          // backgroundColor: '#252836',
           backgroundColor: '#1F1D2B',
           display: 'flex',
           flexDirection: 'column',
@@ -275,7 +305,13 @@ const AddRecipe: React.FC = () => {
                   {display: 'flex', justifyContent: 'space-between', width: '100%'}
                 }>
                   <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleAddField('times')}><AddIcon /></CustomIconButton>
-                  <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleRemoveField('times', index)}><RemoveIcon /></CustomIconButton>
+                  <CustomIconButton
+                    sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} }
+                    onClick={() => handleRemoveField('times', index)}
+                    disabled={recipeData.times.length === 1}
+                  >
+                    <RemoveIcon />
+                  </CustomIconButton>
                 </Box>
               </DynamicField>
             ))}
@@ -319,7 +355,13 @@ const AddRecipe: React.FC = () => {
                   {display: 'flex', justifyContent: 'space-between', width: '100%'}
                 }>
                   <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleAddField('ingredients')}><AddIcon /></CustomIconButton>
-                  <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleRemoveField('ingredients', index)}><RemoveIcon /></CustomIconButton>
+                  <CustomIconButton
+                    sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} }
+                    onClick={() => handleRemoveField('ingredients', index)}
+                    disabled={recipeData.ingredients.length === 1}
+                  >
+                    <RemoveIcon />
+                  </CustomIconButton>
                 </Box>
               </DynamicField>
             ))}
@@ -346,7 +388,13 @@ const AddRecipe: React.FC = () => {
                   {display: 'flex', justifyContent: 'space-between', width: '100%'}
                 }>
                   <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleAddField('steps')}><AddIcon /></CustomIconButton>
-                  <CustomIconButton sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} } onClick={() => handleRemoveField('steps', index)}><RemoveIcon /></CustomIconButton>
+                  <CustomIconButton
+                    sx={ responsive ? {} : {width: '45%', borderRadius: '16px'} }
+                    onClick={() => handleRemoveField('steps', index)}
+                    disabled={recipeData.steps.length === 1}
+                  >
+                    <RemoveIcon />
+                  </CustomIconButton>
                 </Box>
               </DynamicField>
             ))}

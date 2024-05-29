@@ -17,7 +17,6 @@ import {StyledTextField} from "./HomePage";
 import {CustomButton, CustomIconButton, DynamicField, RecipeData, Title} from "./AddRecipe";
 import SideMenu from "../components/SideMenu/SideMenu";
 
-
 const EditRecipePage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,6 +34,28 @@ const EditRecipePage: React.FC = () => {
 
     fetchRecipe();
   }, [id]);
+
+  useEffect(() => {
+    const syncOfflineRecipes = async () => {
+      const offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
+      if (offlineRecipes.length > 0) {
+        for (const recipe of offlineRecipes) {
+          try {
+            await voiceChefApi.post('/recipes', recipe);
+          } catch (error) {
+            console.error('Error syncing recipe', error);
+          }
+        }
+        localStorage.removeItem('offlineRecipes');
+        alert('Offline recipes synced successfully!');
+      }
+    };
+
+    window.addEventListener('online', syncOfflineRecipes);
+    return () => {
+      window.removeEventListener('online', syncOfflineRecipes);
+    };
+  }, []);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -83,12 +104,22 @@ const EditRecipePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!recipeData) return;
     try {
       await voiceChefApi.put(`/recipes/${id}`, recipeData);
       navigate('/'); // Navigate to the home page after successful update
     } catch (error) {
       console.error('Error updating recipe', error);
+      saveRecipeOffline(recipeData);
+      navigate('/');
     }
+  };
+
+  const saveRecipeOffline = (recipeData: RecipeData) => {
+    let offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
+    offlineRecipes.push(recipeData);
+    localStorage.setItem('offlineRecipes', JSON.stringify(offlineRecipes));
+    alert('Recipe saved locally. It will be synced when you go back online.');
   };
 
   if (!recipeData) {
@@ -174,7 +205,7 @@ const EditRecipePage: React.FC = () => {
                   margin="normal"
                 />
                 <CustomIconButton onClick={() => handleAddField('times')}><AddIcon /></CustomIconButton>
-                <CustomIconButton onClick={() => handleRemoveField('times', index)}><RemoveIcon /></CustomIconButton>
+                <CustomIconButton onClick={() => handleRemoveField('times', index)} disabled={recipeData.times.length === 1}><RemoveIcon /></CustomIconButton>
               </DynamicField>
             ))}
 
@@ -210,7 +241,7 @@ const EditRecipePage: React.FC = () => {
                   margin="normal"
                 />
                 <CustomIconButton onClick={() => handleAddField('ingredients')}><AddIcon /></CustomIconButton>
-                <CustomIconButton onClick={() => handleRemoveField('ingredients', index)}><RemoveIcon /></CustomIconButton>
+                <CustomIconButton onClick={() => handleRemoveField('ingredients', index)} disabled={recipeData.ingredients.length === 1}><RemoveIcon /></CustomIconButton>
               </DynamicField>
             ))}
 
@@ -229,7 +260,7 @@ const EditRecipePage: React.FC = () => {
                   margin="normal"
                 />
                 <CustomIconButton onClick={() => handleAddField('steps')}><AddIcon /></CustomIconButton>
-                <CustomIconButton onClick={() => handleRemoveField('steps', index)}><RemoveIcon /></CustomIconButton>
+                <CustomIconButton onClick={() => handleRemoveField('steps', index)} disabled={recipeData.steps.length === 1}><RemoveIcon /></CustomIconButton>
               </DynamicField>
             ))}
 
