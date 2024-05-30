@@ -137,7 +137,10 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
     console.log(`Timer set for ${duration / 60000} minutes`);
     setTimeout(() => {
       if (Notification.permission === 'granted') {
-        new Notification("Timer expired!", { body: `Your timer for ${duration / 60000} minutes has expired!` });
+        new Notification("Timer expired!", {
+          body: `Your timer for ${duration / 60000} minutes has expired!`,
+          icon: '/icon-144.png'
+        });
       }
     }, duration);
   };
