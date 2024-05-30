@@ -138,7 +138,12 @@ const ShoppingListPage: React.FC = () => {
       setNewItemQuantity(0);
       setNewItemUnit('');
     } catch (error) {
-      console.error('Error adding new item', error);
+      if (Notification.permission === 'granted') {
+        new Notification("Error adding new item", {
+          body: `Could not add item. Please try again later.`,
+          icon: '/icon-144.png'
+        });
+      }
     }
   };
 
