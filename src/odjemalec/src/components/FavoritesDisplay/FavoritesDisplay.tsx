@@ -21,7 +21,7 @@ const FavoritesDisplay:FC<FavoritesDisplayProps> = ({isFavorited, recipeId, upda
 
     if(user) {
       try {
-        const response = await voiceChefApi.post('/favorites', {recipeId: recipeId})
+        const response = await voiceChefApi.post('/favorites', {id: user.sub, recipeId: recipeId})
         updateFavoritesFromProps(recipeId)
       } catch (error) {
         if (Notification.permission === 'granted') {
