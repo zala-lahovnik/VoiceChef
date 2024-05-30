@@ -32,6 +32,12 @@ const EditRecipePage: React.FC = () => {
         const result = await voiceChefApi.get(`/recipes/${id}`);
         setRecipeData(result.data);
       } catch (error) {
+        if (Notification.permission === 'granted') {
+          new Notification("Error fetching recipe", {
+            body: 'Fetching recipe failed. Please try again later.',
+            icon: '/icon-144.png'
+          });
+        }
         console.error('Error fetching recipe', error);
       }
     };
@@ -47,6 +53,12 @@ const EditRecipePage: React.FC = () => {
           try {
             await voiceChefApi.post('/recipes', recipe);
           } catch (error) {
+            if (Notification.permission === 'granted') {
+              new Notification("Error syncing recipes", {
+                body: 'Syncing recipes failed. Please try again later.',
+                icon: '/icon-144.png'
+              });
+            }
             console.error('Error syncing recipe', error);
           }
         }
@@ -113,6 +125,12 @@ const EditRecipePage: React.FC = () => {
       await voiceChefApi.put(`/recipes/${id}`, recipeData);
       navigate('/'); // Navigate to the home page after successful update
     } catch (error) {
+      if (Notification.permission === 'granted') {
+        new Notification("Error updating recipe", {
+          body: 'Updating recipe failed. Please try again later.',
+          icon: '/icon-144.png'
+        });
+      }
       console.error('Error updating recipe', error);
       saveRecipeOffline(recipeData);
       navigate('/');

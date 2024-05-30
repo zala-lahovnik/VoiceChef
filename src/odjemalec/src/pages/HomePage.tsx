@@ -118,6 +118,12 @@ const HomePage: FC<RecipesPageProps> = () => {
 
       setCategories(uniqueArray);
     } catch (error) {
+      if (Notification.permission === 'granted') {
+        new Notification("Error fetching recipes", {
+          body: 'Fetching recipes failed. Please try again later.',
+          icon: '/icon-144.png'
+        });
+      }
       console.error("Error fetching recipes", error);
     }
   };

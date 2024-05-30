@@ -33,6 +33,12 @@ const ShoppingListPage: React.FC = () => {
       const result = await voiceChefApi.get('/items');
       setItems(result.data);
     } catch (error) {
+      if (Notification.permission === 'granted') {
+        new Notification("Error fetching shopping list", {
+          body: 'Fetching shopping list failed. Please try again later.',
+          icon: '/icon-144.png'
+        });
+      }
       console.error('Error fetching shopping list', error);
     }
   };
@@ -60,6 +66,12 @@ const ShoppingListPage: React.FC = () => {
       // Remove the deleted item from state without fetching all items again
       setItems(prevItems => prevItems.filter(item => item._id !== id));
     } catch (error) {
+      if (Notification.permission === 'granted') {
+        new Notification("Error deleting item", {
+          body: 'Deleting item failed. Please try again later.',
+          icon: '/icon-144.png'
+        });
+      }
       console.error('Error deleting item', error);
     }
   };
@@ -99,6 +111,12 @@ const ShoppingListPage: React.FC = () => {
       setEditItemStore('');
 
     } catch (error) {
+      if (Notification.permission === 'granted') {
+        new Notification("Error updating item", {
+          body: 'Updating item failed. Please try again later.',
+          icon: '/icon-144.png'
+        });
+      }
       console.error('Error updating item', error);
     }
   };

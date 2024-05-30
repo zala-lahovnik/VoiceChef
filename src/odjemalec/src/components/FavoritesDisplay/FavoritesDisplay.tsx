@@ -25,7 +25,7 @@ const FavoritesDisplay:FC<FavoritesDisplayProps> = ({isFavorited, recipeId, upda
         updateFavoritesFromProps(recipeId)
       } catch (error) {
         if (Notification.permission === 'granted') {
-          new Notification("Add to favorites", {
+          new Notification("Error adding to favorites", {
             body: 'Adding to favorites failed. Please try again later.',
             icon: '/icon-144.png'
           });

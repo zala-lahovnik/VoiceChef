@@ -36,6 +36,12 @@ const PickAndChoosePage:FC<PickAndChoosePageProps> = () => {
       setRecipes(result.data)
       setFilteredRecipes(result.data)
     } catch (error) {
+      if (Notification.permission === 'granted') {
+        new Notification("Error fetching recipes", {
+          body: 'Fetching recipes failed. Please try again later.',
+          icon: '/icon-144.png'
+        });
+      }
       console.error('Error fetching recipes', error)
     }
   }

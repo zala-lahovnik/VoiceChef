@@ -24,6 +24,12 @@ const RecipesPage = () => {
       const result = await voiceChefApi.get('/recipes');
       setRecipes(result.data);
     } catch (error) {
+      if (Notification.permission === 'granted') {
+        new Notification("Error fetching recipes", {
+          body: 'Fetching recipes failed. Please try again later.',
+          icon: '/icon-144.png'
+        });
+      }
       console.error('Error fetching recipes', error);
     }
   };
@@ -39,6 +45,12 @@ const RecipesPage = () => {
       setCurrentRecipe(null)
       setDeleteModalOpen(false)
     } catch (error) {
+      if (Notification.permission === 'granted') {
+        new Notification("Error deleting recipe", {
+          body: 'Deleting recipe failed. Please try again later.',
+          icon: '/icon-144.png'
+        });
+      }
       console.error('Error deleting recipe', error);
     }
   };

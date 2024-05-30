@@ -101,6 +101,12 @@ const AddRecipe: React.FC = () => {
           try {
             await voiceChefApi.post('/recipes', recipe);
           } catch (error) {
+            if (Notification.permission === 'granted') {
+              new Notification("Error syncing recipes", {
+                body: 'Syncing recipes failed. Please try again later.',
+                icon: '/icon-144.png'
+              });
+            }
             console.error('Error syncing recipe', error);
           }
         }
@@ -158,6 +164,12 @@ const AddRecipe: React.FC = () => {
       await voiceChefApi.post('/recipes', recipeData);
       navigate('/');
     } catch (error) {
+      if (Notification.permission === 'granted') {
+        new Notification("Error adding recipe", {
+          body: 'Adding recipe failed. Please try again later.',
+          icon: '/icon-144.png'
+        });
+      }
       console.error('Error adding recipe', error);
       saveRecipeOffline(recipeData);
       navigate('/');
