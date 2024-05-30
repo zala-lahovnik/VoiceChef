@@ -6,18 +6,25 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import IconButton from '@mui/material/IconButton';
 import KitchenRoundedIcon from '@mui/icons-material/KitchenRounded';
 import {useResponsive} from "../../hooks/responsive";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import StarOutlineRoundedIcon from "@mui/icons-material/StarOutlineRounded";
+import {useAuth0} from "@auth0/auth0-react";
+import voiceChefApi from "../../utils/axios";
 
 
 type RecipeDisplayProps = {
-  recipe: Recipe
+  recipe: Recipe,
+  isFavorited: boolean,
+  updateFavoritesFromProps: (recipeId: string) => void
 }
 
-const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
+const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe, isFavorited, updateFavoritesFromProps}) => {
   const [listening, setListening] = useState(false);
   const [recognition, setRecognition] = useState(null);
   const [currentStep, setCurrentStep] = useState<number>(0)
   const responsive = useResponsive('up', 'lg')
   const [openMenu, setOpenMenu] = useState<boolean>(false)
+  const { user } = useAuth0();
 
   useEffect(() => {
     Notification.requestPermission();
@@ -145,6 +152,28 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
     }, duration);
   };
 
+
+  const addItemToFavorites = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    if(user) {
+      try {
+        const response = await voiceChefApi.post('/favorites', {id: user.sub, recipeId: recipe._id})
+        updateFavoritesFromProps(recipe._id)
+      } catch (error) {
+        if (Notification.permission === 'granted') {
+          new Notification("Add to favorites", {
+            body: 'Adding to favorites failed. Please try again later.',
+            icon: '/icon-144.png'
+          });
+        }
+      }
+    }
+
+  }
+
+
   return (
     <Grid container sx={{display: 'flex', padding: responsive ? 10 : 2}}>
       <Grid item xs={12} sx={{
@@ -191,6 +220,23 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
           <Typography sx={{fontSize: '24px', padding: 1, marginBottom: 1, textAlign: 'center', color: '#fff'}}>
             {recipe.title}
           </Typography>
+          {user &&
+            <Grid item xs={12}>
+              <IconButton
+                  sx={{padding: '5px', borderRadius: '50%', backgroundColor: '#252836'}}
+                  onClick={(event) => {addItemToFavorites(event)}}
+              >
+                {
+                  isFavorited ?
+                    <StarRoundedIcon sx={{fontSize: '35px', color: '#d17a22'}} />
+                    :
+                    <StarOutlineRoundedIcon sx={{fontSize: '35px', color: '#d17a22'}} />
+                }
+
+              </IconButton>
+            </Grid>
+          }
+
           <Grid item xs={12} sx={{
             color: '#fff',
             width: '100%',

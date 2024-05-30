@@ -8,6 +8,7 @@ import SideMenu from "../components/SideMenu/SideMenu";
 import {useResponsive} from "../hooks/responsive";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import {useAuth0} from "@auth0/auth0-react";
 
 type SingleRecipePageProps = {}
 
@@ -18,6 +19,8 @@ const SingleRecipePage: FC<SingleRecipePageProps> = () => {
   const [recipes, setRecipes] = useState<Array<Recipe> | null>(null);
   const responsive = useResponsive('up', 'lg')
   const [openMenu, setOpenMenu] = useState<boolean>(false)
+  const [userFavorites, setUserFavorites] = useState<Array<string>>([])
+  const { user } = useAuth0()
 
   const fetchRecipes = async () => {
     const result = await voiceChefApi.get('/recipes');
@@ -27,7 +30,35 @@ const SingleRecipePage: FC<SingleRecipePageProps> = () => {
     if (found) setRecipe(found);
   };
 
+  const updateFavorites = (recipeId: string) => {
+    let tempUserFavorites = JSON.parse(JSON.stringify(userFavorites))
+
+    const recipeIndex = tempUserFavorites.indexOf(recipeId);
+
+    console.log('recipeId', recipeId)
+    console.log('recipeIndex', recipeIndex)
+
+    if (recipeIndex > -1) {
+      tempUserFavorites.splice(recipeIndex, 1);
+    } else {
+      tempUserFavorites.push(recipeId);
+    }
+
+    console.log('tempUserFavorites', tempUserFavorites)
+
+    setUserFavorites(tempUserFavorites)
+  }
+
+  const fetchUserFavorites = async () => {
+    const response = await voiceChefApi.get(`/favorites/${user?.sub || ''}`)
+
+    if (response.data) {
+      setUserFavorites(response.data.favorites)
+    }
+  }
+
   useEffect(() => {
+    if (user) fetchUserFavorites()
     if (recipes == null) fetchRecipes();
     else {
       const found = recipes.find((tempRecipe: Recipe) => tempRecipe._id === id);
@@ -35,14 +66,6 @@ const SingleRecipePage: FC<SingleRecipePageProps> = () => {
     }
   }, [id]);
 
-  const handleDelete = async () => {
-    try {
-      await voiceChefApi.delete(`/recipes/${id}`);
-      navigate('/'); // Redirect to the homepage after deletion
-    } catch (error) {
-      console.error('Error deleting recipe', error);
-    }
-  };
 
   return (
     <Grid container sx={{
@@ -99,7 +122,7 @@ const SingleRecipePage: FC<SingleRecipePageProps> = () => {
       <Grid item xs={12} lg={11} sx={{ overflowY: responsive ? 'scroll' : 'none', height: '100%', paddingBottom: 8, paddingTop: 3 }}>
         {recipe && (
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
-            <SingleRecipeDisplay key={recipe._id} recipe={recipe} />
+            <SingleRecipeDisplay key={recipe._id} recipe={recipe} isFavorited={userFavorites.includes(recipe._id)} updateFavoritesFromProps={updateFavorites} />
           </Box>
         )}
       </Grid>
