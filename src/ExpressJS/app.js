@@ -4,6 +4,7 @@ import connectDB from './db.js';
 import recipeRoute from './routes/recipesRoute.js';
 import authRoute from './routes/authRoute.js';
 import itemRoute from './routes/itemsRoute.js';
+import notificationRoute from './routes/notificationsRoute.js'
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -39,6 +40,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+
 /*
 // Serve static files from the React app
 app.use(express.static(path.join('C:/Users/Domen/OneDrive/1. letnik mag/ST/VoiceChef/src/', 'odjemalec/build'), {
@@ -67,6 +69,7 @@ app.get('/', (req, res) => {
 app.use('/recipes', recipeRoute);
 // app.use('/recipes', checkJwt, recipeRoute);
 app.use('/items', itemRoute);
+app.use('/notifications', notificationRoute);
 /*
 // Catch all other routes and return the index.html file
 app.get('*', (req, res) => {
