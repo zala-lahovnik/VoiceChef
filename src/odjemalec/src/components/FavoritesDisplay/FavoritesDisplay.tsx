@@ -29,7 +29,7 @@ const FavoritesDisplay:FC<FavoritesDisplayProps> = ({isFavorited, recipeId, upda
 
   return (
     <IconButton
-      sx={{marginRight: 2, padding: '2px', borderRadius: '50%', backgroundColor: '#252836'}}
+      sx={{marginRight: 2, padding: '5px', borderRadius: '50%', backgroundColor: '#252836'}}
       onClick={(event) => {addItemToFavorites(event)}}
     >
       {
