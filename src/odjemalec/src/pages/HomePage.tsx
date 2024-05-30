@@ -150,6 +150,7 @@ const HomePage: FC<RecipesPageProps> = () => {
         </Grid>
       :
         <Grid
+          item
           xs={12}
           sx={{
             display: 'flex',
