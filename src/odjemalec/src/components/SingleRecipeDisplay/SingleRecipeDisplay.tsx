@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from "react";
-import {Recipe, RecipeIngredient, RecipeType, RecipeTypeLink} from "../../utils/recipeTypes";
+import {Recipe, RecipeIngredient, RecipeTime, RecipeType, RecipeTypeLink} from "../../utils/recipeTypes";
 import {Avatar, Box, Grid, List, Typography} from "@mui/material";
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
@@ -199,7 +199,42 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
 
           }}>
             <Typography sx={{fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, fontSize: '18px'}}>
-              Sestavine:
+              Prep times:
+            </Typography>
+            <List sx={{ listStyleType: 'disc', width: '100%' }}>
+              {recipe.times.map((ingredientTime: RecipeTime) => {
+                return (
+                  <Grid key={ingredientTime._id} item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 2}}>
+                    <Grid item xs={12} lg={9} sx={{display: 'flex', flexDirection: 'row', columnGap: 2}}>
+                      <KitchenRoundedIcon sx={{color: '#fff'}} />
+
+                      <Typography>
+                        {ingredientTime.label || ''}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} lg={3}>
+                      <Typography sx={{textAlign: 'right'}}>
+                        {ingredientTime.time ? ingredientTime.time : ''}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )
+              })}
+            </List>
+          </Grid>
+          <Grid item xs={12} sx={{
+            color: '#fff',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            padding: 3
+
+          }}>
+            <Typography sx={{fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, fontSize: '18px'}}>
+              Ingredients:
             </Typography>
             <List sx={{ listStyleType: 'disc', width: '100%' }}>
               {recipe.ingredients.map((ingredientItem: RecipeIngredient) => {
@@ -232,7 +267,7 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe}) => {
         }}>
           <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 2, gap: 2}}>
             <Typography variant={'h4'}>
-              Postopek
+              Step by step process
             </Typography>
             {!listening ?
               <IconButton aria-label="play" sx={{color: '#d17a22'}} onClick={startListening}>
