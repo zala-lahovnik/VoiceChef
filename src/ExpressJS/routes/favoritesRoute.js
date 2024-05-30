@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const item = await Favorites.find({userId: req.params.id});
+        const item = await Favorites.findOne({userId: req.params.id});
         if (!item) {
             return res.status(404).json({ error: 'Item not found.' });
         }
