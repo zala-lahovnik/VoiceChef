@@ -11,6 +11,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { auth } from 'express-openid-connect';
 import checkJwt from './middleware/auth.js';
+import favoritesRoute from "./routes/favoritesRoute.js";
 
 dotenv.config();
 
@@ -70,6 +71,7 @@ app.use('/recipes', recipeRoute);
 // app.use('/recipes', checkJwt, recipeRoute);
 app.use('/items', itemRoute);
 app.use('/notifications', notificationRoute);
+app.use('/favorites', favoritesRoute);
 /*
 // Catch all other routes and return the index.html file
 app.get('*', (req, res) => {
