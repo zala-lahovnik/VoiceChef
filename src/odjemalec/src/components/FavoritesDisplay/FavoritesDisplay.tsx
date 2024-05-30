@@ -20,9 +20,14 @@ const FavoritesDisplay:FC<FavoritesDisplayProps> = ({isFavorited, recipeId, upda
     event.stopPropagation()
 
     if(user) {
-      const response = await voiceChefApi.post('/favorites', {id: user?.sub, recipeId: recipeId})
-
-      updateFavoritesFromProps(recipeId)
+      try {
+        const response = await voiceChefApi.post('/favorites', {id: user?.sub, recipeId: recipeId})
+        updateFavoritesFromProps(recipeId)
+      } catch (error) {
+        if (Notification.permission === 'granted') {
+          new Notification("Add to favorites", { body: 'Adding to favorites failed. Please try again later.' });
+        }
+      }
     }
 
   }
