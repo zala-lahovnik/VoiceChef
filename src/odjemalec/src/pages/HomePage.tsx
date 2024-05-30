@@ -23,6 +23,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useResponsive } from "../hooks/responsive";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import {useAuth0} from "@auth0/auth0-react";
 
 type RecipesPageProps = {};
 
@@ -88,6 +89,8 @@ const HomePage: FC<RecipesPageProps> = () => {
   const [searchPrompt, setSearchPrompt] = useState<string>("");
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const responsive = useResponsive("up", "lg");
+  const [userFavorites, setUserFavorites] = useState<Array<string>>([])
+  const { user } = useAuth0()
 
   const fetchRecipes = async () => {
     try {
@@ -116,7 +119,17 @@ const HomePage: FC<RecipesPageProps> = () => {
     }
   };
 
+  const fetchUserFavorites = async () => {
+    const response = await voiceChefApi.get(`/favorites/${user?.sub || ''}`)
+
+    if (response.data) {
+      setUserFavorites(response.data.favorites)
+    }
+  }
+
   useEffect(() => {
+    if(user)
+      fetchUserFavorites()
     fetchRecipes();
   }, []);
 
@@ -148,6 +161,27 @@ const HomePage: FC<RecipesPageProps> = () => {
       setFilteredRecipes(tempFilteredArray);
     }
   }, [selectedCategory, searchPrompt]);
+
+  const updateFavorites = (recipeId: string) => {
+    let tempUserFavorites = JSON.parse(JSON.stringify(userFavorites))
+
+    const recipeIndex = tempUserFavorites.indexOf(recipeId);
+
+    console.log('recipeId', recipeId)
+    console.log('recipeIndex', recipeIndex)
+
+    if (recipeIndex > -1) {
+      tempUserFavorites.splice(recipeIndex, 1);
+    } else {
+      tempUserFavorites.push(recipeId);
+    }
+
+    console.log('tempUserFavorites', tempUserFavorites)
+
+    setUserFavorites(tempUserFavorites)
+  }
+
+  console.log('userFavorites', userFavorites)
 
   return (
     <Grid
@@ -312,7 +346,7 @@ const HomePage: FC<RecipesPageProps> = () => {
                     }}
                     sx={{ cursor: "pointer" }}
                   >
-                    <RecipeDisplay recipe={recipe} />
+                    <RecipeDisplay recipe={recipe} isFavorited={userFavorites.includes(recipe._id)} updateFavoritesFromProps={updateFavorites} />
                   </Grid>
                 );
               })}
