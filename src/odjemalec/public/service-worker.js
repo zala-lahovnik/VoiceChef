@@ -4,13 +4,17 @@ const urlsToCache = [
   "/index.html",
   "/offline.html",
   "/favicon.ico",
+  "/manifest.json",
   "/logo192.png",
   "/logo512.png",
-  "/manifest.json",
-  "/robots.txt",
+  "/icon-72x72.png",
+  "/icon-128x128.png",
+  "/icon-144x144.png",
+  "/icon-192.png",
+  "/icon-512x512.png",
   "/static/css/main.d27c5761.css", // Posodobite z dejanskim hashom
   "/static/js/453.01cb5c1c.chunk.js", // Posodobite z dejanskim hashom
-  "/static/js/main.a5e8473d.js", // Posodobite z dejanskim hashom
+  "/static/js/main.de974e35.js", // Posodobite z dejanskim hashom
 ];
 
 self.addEventListener("install", (event) => {
@@ -52,16 +56,16 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  //console.log("Fetch event for ", event.request.url);
+  console.log("Fetch event for ", event.request.url);
   event.respondWith(
     caches
       .match(event.request)
       .then((response) => {
         if (response) {
-          //console.log('Found ', event.request.url, ' in cache');
+          console.log("Found ", event.request.url, " in cache");
           return response;
         }
-        //console.log("Network request for ", event.request.url);
+        console.log("Network request for ", event.request.url);
         return fetch(event.request).catch(() => {
           return caches.match("/offline.html");
         });
