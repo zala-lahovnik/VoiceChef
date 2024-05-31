@@ -8,20 +8,20 @@ const isLocalhost = Boolean(
     )
 );
 
-// type Config = {
-//   onSuccess?: (registration: ServiceWorkerRegistration) => void;
-//   onUpdate?: (registration: ServiceWorkerRegistration) => void;
-// };
+type Config = {
+  onSuccess?: (registration: ServiceWorkerRegistration) => void;
+  onUpdate?: (registration: ServiceWorkerRegistration) => void;
+};
 
-export function register(config) {
+export function register(config?: Config) {
   if ("serviceWorker" in navigator) {
-    const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
+    const publicUrl = new URL(process.env.PUBLIC_URL!, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
       return;
     }
 
     window.addEventListener("load", () => {
-      const swUrl = `${publicUrl}/service-worker.js`;
+      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
 
       if (isLocalhost) {
         checkValidServiceWorker(swUrl, config);
@@ -38,7 +38,7 @@ export function register(config) {
   }
 }
 
-function registerValidSW(swUrl, config) {
+function registerValidSW(swUrl: string, config?: Config) {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
@@ -68,43 +68,38 @@ function registerValidSW(swUrl, config) {
           }
         };
       };
+
       return registration.pushManager
         .getSubscription()
         .then(async (subscription) => {
-          // if(subscription) {
-          //   return subscription
-          // } else {
-          const response = await voiceChefApi.get(
-            "/notifications/vapid-public-key"
-          );
+          if (subscription) {
+            return subscription;
+          } else {
+            const response = await voiceChefApi.get(
+              "/notifications/vapid-public-key"
+            );
+            const vapidPublicKey = response.data.publicKey;
+            const convertedVapidKey = vapidPublicKey;
 
-          //console.log('response', response)
-
-          const vapidPublicKey = response.data.publicKey;
-
-          console.log("vapidPublic", vapidPublicKey);
-
-          const convertedVapidKey = vapidPublicKey;
-
-          return registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: convertedVapidKey,
-          });
-          // }
+            return registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: convertedVapidKey,
+            });
+          }
         });
     })
     .then((subscription) => {
-      //console.log('subscription', subscription)
-
-      localStorage.setItem("subscription", JSON.stringify(subscription));
-      sendSubscriptionToServer(subscription);
+      if (subscription) {
+        localStorage.setItem("subscription", JSON.stringify(subscription));
+        sendSubscriptionToServer(subscription);
+      }
     })
     .catch((error) => {
       console.error("Error during service worker registration:", error);
     });
 }
 
-function checkValidServiceWorker(swUrl, config) {
+function checkValidServiceWorker(swUrl: string, config?: Config) {
   fetch(swUrl, {
     headers: { "Service-Worker": "script" },
   })
@@ -142,8 +137,8 @@ export function unregister() {
   }
 }
 
-async function sendSubscriptionToServer(subscription) {
-  console.log("sent subscription", subscription);
+async function sendSubscriptionToServer(subscription: PushSubscription) {
+  console.log("Sent subscription", subscription);
 
   // Send the subscription object to your server using a fetch request
   await voiceChefApi
@@ -152,7 +147,7 @@ async function sendSubscriptionToServer(subscription) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: { subscription },
+      body: JSON.stringify({ subscription }),
     })
     .then((response) => {
       if (!response) {
