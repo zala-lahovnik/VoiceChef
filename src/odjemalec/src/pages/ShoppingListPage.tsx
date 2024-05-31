@@ -1,36 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import {Box, Drawer, Grid} from "@mui/material";
+import { Box, Drawer, Grid } from "@mui/material";
 import voiceChefApi from '../utils/axios';
 import { Item } from "../utils/itemTypes";
-import { useNavigate } from "react-router-dom";
 import SideMenu from '../components/SideMenu/SideMenu';
 import SideMenuShops from '../components/SideMenuShops/SideMenuShops';
 import ItemTable from '../components/ItemDisplay/ItemTable';
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import {useResponsive} from "../hooks/responsive";
+import { useResponsive } from "../hooks/responsive";
+import { useAuth0 } from '@auth0/auth0-react';
 
 const ShoppingListPage: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [selectedStore, setSelectedStore] = useState<string | null>(null);
-  const [editItemId, setEditItemId] = useState<string | null>(null); // ID of the item being edited
-  const [editItemName, setEditItemName] = useState<string>(''); // Edited item name
-  const [editItemQuantity, setEditItemQuantity] = useState<number>(0); // Edited item quantity
-  const [editItemUnit, setEditItemUnit] = useState<string>(''); // Edited item unit
-  const [editItemStore, setEditItemStore] = useState<string>(''); // Edited item store
+  const [editItemId, setEditItemId] = useState<string | null>(null);
+  const [editItemName, setEditItemName] = useState<string>('');
+  const [editItemQuantity, setEditItemQuantity] = useState<number>(0);
+  const [editItemUnit, setEditItemUnit] = useState<string>('');
+  const [editItemStore, setEditItemStore] = useState<string>('');
 
-  const [newItemName, setNewItemName] = useState<string>(''); // New item name
-  const [newItemQuantity, setNewItemQuantity] = useState<number>(0); // New item quantity
-  const [newItemUnit, setNewItemUnit] = useState<string>(''); // New item unit
+  const [newItemName, setNewItemName] = useState<string>('');
+  const [newItemQuantity, setNewItemQuantity] = useState<number>(0);
+  const [newItemUnit, setNewItemUnit] = useState<string>('');
 
   const [openMenu, setOpenMenu] = useState<boolean>(false)
   const responsive = useResponsive('up', 'lg')
 
-  const navigate = useNavigate();
+  const { user } = useAuth0();
 
   const fetchItems = async () => {
     try {
-      const result = await voiceChefApi.get('/items');
+      const result = await voiceChefApi.get(`/items/${user?.sub}`);
       setItems(result.data);
     } catch (error) {
       if (Notification.permission === 'granted') {
@@ -49,9 +49,9 @@ const ShoppingListPage: React.FC = () => {
 
   const handleStoreSelect = (store: string) => {
     if (store === "All") {
-      setSelectedStore(null); // Set selectedStore to null to show all items
+      setSelectedStore(null);
     } else {
-      setSelectedStore(store); // Set selectedStore to the selected store name
+      setSelectedStore(store);
     }
   };
 
@@ -63,7 +63,6 @@ const ShoppingListPage: React.FC = () => {
   const handleDeleteItem = async (id: string) => {
     try {
       await voiceChefApi.delete(`/items/${id}`);
-      // Remove the deleted item from state without fetching all items again
       setItems(prevItems => prevItems.filter(item => item._id !== id));
     } catch (error) {
       if (Notification.permission === 'granted') {
@@ -80,10 +79,11 @@ const ShoppingListPage: React.FC = () => {
     try {
       // Perform the update request to backend with edited data
       await voiceChefApi.put(`/items/${id}`, {
+        userId: user?.sub,
         item: editItemName,
         quantity: editItemQuantity,
         unit: editItemUnit,
-        store: editItemStore // Include edited store in the update request
+        store: editItemStore
       });
 
       // Update the local items state
@@ -95,7 +95,7 @@ const ShoppingListPage: React.FC = () => {
               item: editItemName,
               quantity: editItemQuantity,
               unit: editItemUnit,
-              store: editItemStore // Update store name in local state
+              store: editItemStore
             };
           }
           return item;
@@ -138,29 +138,32 @@ const ShoppingListPage: React.FC = () => {
   };
 
   const handleAddNewItem = async () => {
-    try {
-      const newItem = {
-        item: newItemName,
-        quantity: newItemQuantity,
-        unit: newItemUnit,
-        store: selectedStore || "Uncategorized"
-      };
-      
-      const result = await voiceChefApi.post('/items', newItem);
+    if (user) {
+      try {
+        const newItem = {
+          userId: user.sub,
+          item: newItemName,
+          quantity: newItemQuantity,
+          unit: newItemUnit,
+          store: selectedStore || "Uncategorized"
+        };
 
-      // Add the new item to the local state
-      setItems([...items, result.data]);
+        const result = await voiceChefApi.post('/items', newItem);
 
-      // Clear the new item form
-      setNewItemName('');
-      setNewItemQuantity(0);
-      setNewItemUnit('');
-    } catch (error) {
-      if (Notification.permission === 'granted') {
-        new Notification("Error adding new item", {
-          body: `Could not add item. Please try again later.`,
-          icon: '/icon-144.png'
-        });
+        // Add the new item to the local state
+        setItems([...items, result.data]);
+
+        // Clear the new item form
+        setNewItemName('');
+        setNewItemQuantity(0);
+        setNewItemUnit('');
+      } catch (error) {
+        if (Notification.permission === 'granted') {
+          new Notification("Error adding new item", {
+            body: `Could not add item. Please try again later.`,
+            icon: '/icon-144.png'
+          });
+        }
       }
     }
   };
@@ -179,10 +182,10 @@ const ShoppingListPage: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'flex-start',
       maxHeight: '100%',
-      height: {xs: '50vh', sm: '95vh', lg: '100vh'}
+      height: { xs: '50vh', sm: '95vh', lg: '100vh' }
     }}>
       {responsive ?
-        <Grid item xs={12} lg={1} sx={{height: {xs: '0%', lg: '100%'}}}>
+        <Grid item xs={12} lg={1} sx={{ height: { xs: '0%', lg: '100%' } }}>
           <SideMenu />
         </Grid>
         :
@@ -199,9 +202,9 @@ const ShoppingListPage: React.FC = () => {
           }}
         >
           <IconButton
-            onClick={() => {setOpenMenu(true)}}
+            onClick={() => { setOpenMenu(true) }}
           >
-            <MenuIcon sx={{color: '#fff'}} />
+            <MenuIcon sx={{ color: '#fff' }} />
           </IconButton>
           <Drawer
             open={openMenu}
@@ -217,7 +220,7 @@ const ShoppingListPage: React.FC = () => {
                 }
               }
             }}>
-            <Box sx={{width: '100%', height: '100%'}}>
+            <Box sx={{ width: '100%', height: '100%' }}>
               <SideMenu />
             </Box>
           </Drawer>

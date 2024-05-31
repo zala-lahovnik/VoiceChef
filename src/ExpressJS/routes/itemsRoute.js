@@ -15,9 +15,10 @@ router.post('/', async (req, res) => {
 });
 
 // GET: Get all shopping list items
-router.get('/', async (req, res) => {
+router.get('/:userid', async (req, res) => {
     try {
-        const items = await Item.find();
+        const userid = req.params.userid;
+        const items = await Item.find({ userId: userid });
         res.status(200).json(items);
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while fetching items.' });
