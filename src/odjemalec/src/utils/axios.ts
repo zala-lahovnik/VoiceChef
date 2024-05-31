@@ -1,7 +1,7 @@
 import Axios, {
   AxiosRequestConfig,
+  AxiosResponse,
   InternalAxiosRequestConfig,
-  AxiosHeaders,
 } from "axios";
 
 // Ustvarimo Axios instanco
@@ -19,28 +19,37 @@ const isOnline = () => {
   return window.navigator.onLine;
 };
 
-const saveRequestToLocalStorage = (config: InternalAxiosRequestConfig) => {
-  const requests = JSON.parse(localStorage.getItem("offlineRequests") || "[]");
-  requests.push(config);
-  localStorage.setItem("offlineRequests", JSON.stringify(requests));
-};
-
 // Dodamo interceptor za dodajanje dostopnega žetona v glavo vsake zahteve
 voiceChefApi.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
+  async (
+    config: InternalAxiosRequestConfig
+  ): Promise<InternalAxiosRequestConfig> => {
     const token = sessionStorage.getItem("accessToken");
     if (token) {
-      if (config.headers) {
-        const headers = config.headers as AxiosHeaders;
-        headers.set("Authorization", `Bearer ${token}`);
-        console.log("Authorization header set:", headers.get("Authorization"));
-      }
+      config.headers.set("Authorization", `Bearer ${token}`);
+      console.log(
+        "Authorization header set:",
+        config.headers.get("Authorization")
+      );
     }
 
     if (!isOnline()) {
-      console.log(`Saving request to localStorage: ${config.url}`);
-      saveRequestToLocalStorage(config);
-      return Promise.reject({ message: "offline" });
+      const url = config.url;
+      const method = config.method?.toUpperCase();
+      const key = `${method}:${url}`;
+      const cachedData = localStorage.getItem(key);
+
+      if (cachedData) {
+        console.log(`Using cached data for ${key}`);
+        return {
+          ...config,
+          data: JSON.parse(cachedData),
+          headers: config.headers,
+          status: 200,
+          statusText: "OK",
+          request: config,
+        } as unknown as InternalAxiosRequestConfig;
+      }
     }
 
     return config;
@@ -52,10 +61,10 @@ voiceChefApi.interceptors.request.use(
 
 // Dodamo interceptor za shranjevanje odgovorov API zahtev v localStorage
 voiceChefApi.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     if (isOnline()) {
       const url = response.config.url;
-      const method = response.config.method;
+      const method = response.config.method?.toUpperCase();
       const key = `${method}:${url}`;
 
       localStorage.setItem(key, JSON.stringify(response.data));
