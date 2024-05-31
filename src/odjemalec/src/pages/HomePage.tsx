@@ -23,7 +23,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useResponsive } from "../hooks/responsive";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import {useAuth0} from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import StarOutlineRoundedIcon from "@mui/icons-material/StarOutlineRounded";
 
@@ -129,15 +129,19 @@ const HomePage: FC<RecipesPageProps> = () => {
   };
 
   const fetchUserFavorites = async () => {
-    const response = await voiceChefApi.get(`/favorites/${user?.sub || ''}`)
+    try {
+      const response = await voiceChefApi.get(`/favorites/${user?.sub || ''}`);
 
-    if (response.data) {
-      setUserFavorites(response.data.favorites)
+      if (response.data) {
+        setUserFavorites(response.data.favorites);
+      }
+    } catch (error) {
+      console.error('Error fetching user favorites:', error);
     }
-  }
+  };
 
   useEffect(() => {
-    if(user)
+    if (user)
       fetchUserFavorites()
     fetchRecipes();
   }, []);
@@ -167,7 +171,7 @@ const HomePage: FC<RecipesPageProps> = () => {
         );
       }
 
-      if(filterFavorites)
+      if (filterFavorites)
         tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) =>
           userFavorites.includes(filteredRecipe._id)
         )
@@ -330,20 +334,20 @@ const HomePage: FC<RecipesPageProps> = () => {
             </Grid>
 
             {user &&
-                <Grid item xs={responsive ? 1 : 12}>
-                    <IconButton
-                        sx={{marginRight: 2, padding: '5px', borderRadius: '50%', backgroundColor: '#1F1D2B'}}
-                        onClick={() => {setFilterFavorites(!filterFavorites)}}
-                    >
-                      {
-                        filterFavorites ?
-                          <StarRoundedIcon sx={{fontSize: '35px', color: '#d17a22'}} />
-                          :
-                          <StarOutlineRoundedIcon sx={{fontSize: '35px', color: '#d17a22'}} />
-                      }
+              <Grid item xs={responsive ? 1 : 12}>
+                <IconButton
+                  sx={{ marginRight: 2, padding: '5px', borderRadius: '50%', backgroundColor: '#1F1D2B' }}
+                  onClick={() => { setFilterFavorites(!filterFavorites) }}
+                >
+                  {
+                    filterFavorites ?
+                      <StarRoundedIcon sx={{ fontSize: '35px', color: '#d17a22' }} />
+                      :
+                      <StarOutlineRoundedIcon sx={{ fontSize: '35px', color: '#d17a22' }} />
+                  }
 
-                    </IconButton>
-                </Grid>
+                </IconButton>
+              </Grid>
             }
           </Grid>
         </Grid>
