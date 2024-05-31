@@ -20,11 +20,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {useResponsive} from "../hooks/responsive";
 
 const EditRecipePage: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>(); // Ensure id is treated as a string
   const navigate = useNavigate();
   const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
-  const responsive = useResponsive('up', 'lg')
-  const [openMenu, setOpenMenu] = useState<boolean>(false)
+  const responsive = useResponsive('up', 'lg');
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -46,30 +46,30 @@ const EditRecipePage: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    const syncOfflineRecipes = async () => {
-      const offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
-      if (offlineRecipes.length > 0) {
-        for (const recipe of offlineRecipes) {
+    const syncOfflineEdits = async () => {
+      const offlineEdits = JSON.parse(localStorage.getItem('offlineEdits') || '[]');
+      if (offlineEdits.length > 0) {
+        for (const edit of offlineEdits) {
           try {
-            await voiceChefApi.post('/recipes', recipe);
+            await voiceChefApi.put(`/recipes/${edit.id}`, edit.data);
           } catch (error) {
             if (Notification.permission === 'granted') {
-              new Notification("Error syncing recipes", {
-                body: 'Syncing recipes failed. Please try again later.',
+              new Notification("Error syncing edits", {
+                body: 'Syncing edits failed. Please try again later.',
                 icon: '/icon-144.png'
               });
             }
-            console.error('Error syncing recipe', error);
+            console.error('Error syncing edit', error);
           }
         }
-        localStorage.removeItem('offlineRecipes');
-        alert('Offline recipes synced successfully!');
+        localStorage.removeItem('offlineEdits');
+        alert('Offline edits synced successfully!');
       }
     };
 
-    window.addEventListener('online', syncOfflineRecipes);
+    window.addEventListener('online', syncOfflineEdits);
     return () => {
-      window.removeEventListener('online', syncOfflineRecipes);
+      window.removeEventListener('online', syncOfflineEdits);
     };
   }, []);
 
@@ -132,16 +132,16 @@ const EditRecipePage: React.FC = () => {
         });
       }
       console.error('Error updating recipe', error);
-      saveRecipeOffline(recipeData);
+      saveEditOffline(id as string, recipeData); // Type assertion to treat id as string
       navigate('/');
     }
   };
 
-  const saveRecipeOffline = (recipeData: RecipeData) => {
-    let offlineRecipes = JSON.parse(localStorage.getItem('offlineRecipes') || '[]');
-    offlineRecipes.push(recipeData);
-    localStorage.setItem('offlineRecipes', JSON.stringify(offlineRecipes));
-    alert('Recipe saved locally. It will be synced when you go back online.');
+  const saveEditOffline = (id: string, recipeData: RecipeData) => {
+    let offlineEdits = JSON.parse(localStorage.getItem('offlineEdits') || '[]');
+    offlineEdits.push({ id, data: recipeData });
+    localStorage.setItem('offlineEdits', JSON.stringify(offlineEdits));
+    alert('Recipe edit saved locally. It will be synced when you go back online.');
   };
 
   if (!recipeData) {
