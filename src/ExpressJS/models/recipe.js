@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const recipeSchema = new mongoose.Schema({
+    userId: { type: String },
     title: { type: String, required: true },
     category: { type: String, required: true },
     type: [{

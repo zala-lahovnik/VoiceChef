@@ -1,28 +1,31 @@
-import {Grid, Typography, Button, Box, Modal, Paper, TextField, DialogActions, Drawer} from "@mui/material";
+import {Grid, Typography, Button, Box, Modal, Paper, DialogActions, Drawer, IconButton} from "@mui/material";
 import SideMenu from "../components/SideMenu/SideMenu";
 import React, { useEffect, useState } from "react";
 import { Recipe } from "../utils/recipeTypes";
 import voiceChefApi from "../utils/axios";
 import { useNavigate } from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {useResponsive} from "../hooks/responsive";
+import { useResponsive } from "../hooks/responsive";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const RecipesPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const navigate = useNavigate();
-  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
-  const [currentRecipe, setCurrentRecipe] = useState<Recipe | null>(null)
-  const responsive = useResponsive('up', 'lg')
-  const [openMenu, setOpenMenu] = useState<boolean>(false)
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [currentRecipe, setCurrentRecipe] = useState<Recipe | null>(null);
+  const responsive = useResponsive('up', 'lg');
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const { user } = useAuth0(); // Get the logged-in user
 
   const fetchRecipes = async () => {
     try {
-      const result = await voiceChefApi.get('/recipes');
-      setRecipes(result.data);
+      if (user) {
+        const result = await voiceChefApi.get(`/recipes/user/${user.sub}`);
+        setRecipes(result.data);
+      }
     } catch (error) {
       if (Notification.permission === 'granted') {
         new Notification("Error fetching recipes", {
@@ -36,14 +39,14 @@ const RecipesPage = () => {
 
   useEffect(() => {
     fetchRecipes();
-  }, []);
+  }, [user]);
 
   const handleDelete = async (id: string) => {
     try {
       await voiceChefApi.delete(`/recipes/${id}`);
       fetchRecipes(); // Refresh the list after deletion
-      setCurrentRecipe(null)
-      setDeleteModalOpen(false)
+      setCurrentRecipe(null);
+      setDeleteModalOpen(false);
     } catch (error) {
       if (Notification.permission === 'granted') {
         new Notification("Error deleting recipe", {
@@ -63,7 +66,7 @@ const RecipesPage = () => {
     navigate('/add-recipe');
   };
 
-  const handleClose = () => setDeleteModalOpen(false)
+  const handleClose = () => setDeleteModalOpen(false);
 
   return (
     <Grid container sx={{
@@ -127,7 +130,7 @@ const RecipesPage = () => {
         <Grid sx={{backgroundColor: '#1F1D2B', padding: responsive ? 10 : 3, borderRadius: '16px' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <Typography variant="h4">
-              Recipe List
+              My Recipes
             </Typography>
             <IconButton
               sx={{
@@ -154,7 +157,7 @@ const RecipesPage = () => {
                 <Typography
                   onClick={() => {navigate(`/recipe/${recipe._id}`)}}
                   variant={responsive ? 'h6': 'subtitle1'}
-                  sx={{cursor: 'pointer', }}
+                  sx={{cursor: 'pointer'}}
                 >
                   {recipe.title}
                 </Typography>

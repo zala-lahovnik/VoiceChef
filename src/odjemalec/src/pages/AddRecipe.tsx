@@ -14,9 +14,10 @@ import { styled } from '@mui/system';
 import voiceChefApi from '../utils/axios';
 import './AddRecipe.css';
 import SideMenu from "../components/SideMenu/SideMenu";
-import {StyledTextField} from "./HomePage";
+import { StyledTextField } from "./HomePage";
 import MenuIcon from "@mui/icons-material/Menu";
-import {useResponsive} from "../hooks/responsive";
+import { useResponsive } from "../hooks/responsive";
+import { useAuth0 } from "@auth0/auth0-react"; // Import useAuth0
 
 export interface Time {
   label: string;
@@ -35,6 +36,7 @@ export interface Step {
 }
 
 export interface RecipeData {
+  userId?: string; // Make userId optional
   title: string;
   category: string;
   times: Time[];
@@ -81,7 +83,10 @@ export const DynamicField = styled('div')({
 
 const AddRecipe: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth0(); // Get the logged-in user
+
   const [recipeData, setRecipeData] = useState<RecipeData>({
+    userId: user?.sub || '', // Initialize with user ID if available
     title: '',
     category: '',
     times: [{ label: '', time: '' }],
@@ -90,6 +95,7 @@ const AddRecipe: React.FC = () => {
     steps: [{ step: 1, text: '' }],
     img: ''
   });
+
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const responsive = useResponsive('up', 'lg');
 
