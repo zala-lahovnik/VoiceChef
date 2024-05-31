@@ -58,24 +58,22 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   console.log("Fetch event for ", event.request.url);
   event.respondWith(
-    caches.open(CACHE_NAME).then(function (cache) {
-      cache
-        .match(event.request)
-        .then((response) => {
-          if (response) {
-            console.log("Found ", event.request.url, " in cache");
-            return response;
-          }
-          console.log("Network request for ", event.request.url);
-          return fetch(event.request).catch(() => {
-            return caches.match("/offline.html");
-          });
-        })
-        .catch((error) => {
-          console.error("Error in fetch handler:", error);
+    caches
+      .match(event.request)
+      .then((response) => {
+        if (response) {
+          console.log("Found ", event.request.url, " in cache");
+          return response;
+        }
+        console.log("Network request for ", event.request.url);
+        return fetch(event.request).catch(() => {
           return caches.match("/offline.html");
         });
-    })
+      })
+      .catch((error) => {
+        console.error("Error in fetch handler:", error);
+        return caches.match("/offline.html");
+      })
   );
 });
 
