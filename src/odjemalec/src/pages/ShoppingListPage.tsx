@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Drawer, Grid } from "@mui/material";
 import voiceChefApi from '../utils/axios';
 import { Item } from "../utils/itemTypes";
@@ -60,20 +60,87 @@ const ShoppingListPage: React.FC = () => {
     ? items.filter(item => item.store === selectedStore)
     : items;
 
-  const handleDeleteItem = async (id: string) => {
-    try {
-      await voiceChefApi.delete(`/items/${id}`);
-      setItems(prevItems => prevItems.filter(item => item._id !== id));
-    } catch (error) {
-      if (Notification.permission === 'granted') {
-        new Notification("Error deleting item", {
-          body: 'Deleting item failed. Please try again later.',
-          icon: '/icon-144.png'
-        });
+    const handleDeleteItem = useCallback(async (id: string) => {
+      try {
+        if (navigator.onLine) {
+          await voiceChefApi.delete(`/items/${id}`);
+  
+          setItems(prevItems => {
+            const updatedItems = prevItems.filter(item => item._id !== id);
+            localStorage.setItem('items', JSON.stringify(updatedItems));
+            return updatedItems;
+          });
+  
+          // Notify user of successful deletion if permission is granted
+          if (Notification.permission === 'granted') {
+            new Notification("Item deleted", {
+              body: 'The item was successfully deleted.',
+              icon: '/icon-144.png'
+            });
+          }
+        } else {
+          // Queue the deletion for later synchronization
+          const pendingDeletions = JSON.parse(localStorage.getItem('pendingDeletions') || '[]');
+          pendingDeletions.push(id);
+          localStorage.setItem('pendingDeletions', JSON.stringify(pendingDeletions));
+  
+          setItems(prevItems => {
+            const updatedItems = prevItems.filter(item => item._id !== id);
+            localStorage.setItem('items', JSON.stringify(updatedItems));
+            return updatedItems;
+          });
+  
+          // Notify user of offline deletion
+          if (Notification.permission === 'granted') {
+            new Notification("Item deleted locally", {
+              body: 'You are offline. Item will be deleted from the server when you are back online.',
+              icon: '/icon-144.png'
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting item', error);
+        if (Notification.permission === 'granted') {
+          new Notification("Error deleting item", {
+            body: 'Deleting item failed. Please try again later.',
+            icon: '/icon-144.png'
+          });
+        }
       }
-      console.error('Error deleting item', error);
-    }
-  };
+    }, []);
+  
+    const synchronizePendingDeletions = async () => {
+      if (navigator.onLine) {
+        const pendingDeletionsString = localStorage.getItem('pendingDeletions');
+        if (!pendingDeletionsString) return;
+  
+        const pendingDeletions = JSON.parse(pendingDeletionsString);
+        for (const id of pendingDeletions) {
+          try {
+            // Add logging to inspect the request payload
+            console.log(`Attempting to delete item with ID: ${id}`);
+  
+            const response = await voiceChefApi.delete(`/items/${id}`);
+  
+            // Log the server's response
+            console.log(`Server response for deletion of item ${id}:`, response);
+          } catch (error) {
+            // Log the error details
+            console.error(`Error synchronizing deletion for item ${id}`, error);
+          }
+        }
+        // Clear pending deletions after synchronization
+        localStorage.removeItem('pendingDeletions');
+      }
+    };
+  
+    // Use the updated function in the useEffect hook
+    useEffect(() => {
+      window.addEventListener('online', synchronizePendingDeletions);
+      return () => {
+        window.removeEventListener('online', synchronizePendingDeletions);
+      };
+    }, []);
 
   const handleEditItem = async (id: string) => {
     try {
