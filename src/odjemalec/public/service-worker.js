@@ -56,29 +56,35 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  console.log("Fetch event for ", event.request.url);
+  //console.log("Fetch event for ", event.request.url);
   event.respondWith(
-    caches
-      .match(event.request)
-      .then((response) => {
-        if (response) {
-          console.log("Found ", event.request.url, " in cache");
-          return response;
-        }
-        console.log("Network request for ", event.request.url);
-        return fetch(event.request).catch(() => {
+    caches.match(event.request).then((response) => {
+      if (response) {
+        //console.log("Found ", event.request.url, " in cache");
+        return response;
+      }
+      //console.log("Network request for ", event.request.url);
+      return fetch(event.request)
+        .then((networkResponse) => {
+          // Check if the response is a redirect
+          if (networkResponse.type === "opaqueredirect") {
+            return Response.redirect(networkResponse.url);
+          }
+
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request.url, networkResponse.clone());
+            return networkResponse;
+          });
+        })
+        .catch(() => {
           return caches.match("/offline.html");
         });
-      })
-      .catch((error) => {
-        console.error("Error in fetch handler:", error);
-        return caches.match("/offline.html");
-      })
+    })
   );
 });
 
 self.addEventListener("push", function (event) {
-  console.log("push event v /public");
+  //console.log("push event v /public");
 
   const payload = event.data.json();
   const title = payload.title;

@@ -1,4 +1,8 @@
-import Axios from "axios";
+import Axios, {
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+  AxiosHeaders,
+} from "axios";
 
 // Ustvarimo Axios instanco
 export const voiceChefApi = Axios.create({
@@ -15,32 +19,28 @@ const isOnline = () => {
   return window.navigator.onLine;
 };
 
+const saveRequestToLocalStorage = (config: InternalAxiosRequestConfig) => {
+  const requests = JSON.parse(localStorage.getItem("offlineRequests") || "[]");
+  requests.push(config);
+  localStorage.setItem("offlineRequests", JSON.stringify(requests));
+};
+
 // Dodamo interceptor za dodajanje dostopnega žetona v glavo vsake zahteve
 voiceChefApi.interceptors.request.use(
-  async (config) => {
+  async (config: InternalAxiosRequestConfig) => {
     const token = sessionStorage.getItem("accessToken");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-      console.log("Authorization header set:", config.headers.Authorization);
+      if (config.headers) {
+        const headers = config.headers as AxiosHeaders;
+        headers.set("Authorization", `Bearer ${token}`);
+        console.log("Authorization header set:", headers.get("Authorization"));
+      }
     }
 
     if (!isOnline()) {
-      const url = config.url;
-      const method = config.method;
-      const key = `${method}:${url}`;
-      const cachedData = localStorage.getItem(key);
-
-      if (cachedData) {
-        console.log(`Using cached data for ${key}`);
-        return Promise.resolve({
-          ...config,
-          data: JSON.parse(cachedData),
-          headers: config.headers,
-          status: 200,
-          statusText: "OK",
-          request: config,
-        });
-      }
+      console.log(`Saving request to localStorage: ${config.url}`);
+      saveRequestToLocalStorage(config);
+      return Promise.reject({ message: "offline" });
     }
 
     return config;
