@@ -7,11 +7,11 @@ const urlsToCache = [
   "/manifest.json",
   "/logo192.png",
   "/logo512.png",
-  "/icon-72x72.png",
-  "/icon-128x128.png",
-  "/icon-144x144.png",
+  "/icon-72.png",
+  "/icon-128.png",
+  "/icon-144.png",
   "/icon-192.png",
-  "/icon-512x512.png",
+  "/icon-512.png",
   "/static/css/main.d27c5761.css", // Posodobite z dejanskim hashom
   "/static/js/453.01cb5c1c.chunk.js", // Posodobite z dejanskim hashom
   "/static/js/main.de974e35.js", // Posodobite z dejanskim hashom
