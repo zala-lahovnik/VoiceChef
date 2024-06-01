@@ -39,6 +39,32 @@ const RecipesPage = () => {
 
   useEffect(() => {
     fetchRecipes();
+
+    const syncOfflineDeletes = async () => {
+      const offlineDeletes = JSON.parse(localStorage.getItem('offlineDeletes') || '[]');
+      if (offlineDeletes.length > 0) {
+        for (const id of offlineDeletes) {
+          try {
+            await voiceChefApi.delete(`/recipes/${id}`);
+          } catch (error) {
+            if (Notification.permission === 'granted') {
+              new Notification("Error syncing deletes", {
+                body: 'Syncing deletes failed. Please try again later.',
+                icon: '/icon-144.png'
+              });
+            }
+            console.error('Error syncing delete', error);
+          }
+        }
+        localStorage.removeItem('offlineDeletes');
+        alert('Offline deletes synced successfully!');
+      }
+    };
+
+    window.addEventListener('online', syncOfflineDeletes);
+    return () => {
+      window.removeEventListener('online', syncOfflineDeletes);
+    };
   }, [user]);
 
   const handleDelete = async (id: string) => {
@@ -55,7 +81,18 @@ const RecipesPage = () => {
         });
       }
       console.error('Error deleting recipe', error);
+      saveDeleteOffline(id);
+      fetchRecipes(); // Refresh the list to reflect the local delete
+      setCurrentRecipe(null);
+      setDeleteModalOpen(false);
     }
+  };
+
+  const saveDeleteOffline = (id: string) => {
+    let offlineDeletes = JSON.parse(localStorage.getItem('offlineDeletes') || '[]');
+    offlineDeletes.push(id);
+    localStorage.setItem('offlineDeletes', JSON.stringify(offlineDeletes));
+    alert('Delete action saved locally. It will be synced when you go back online.');
   };
 
   const handleEdit = (id: string) => {

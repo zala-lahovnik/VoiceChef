@@ -91,9 +91,9 @@ const HomePage: FC<RecipesPageProps> = () => {
   const [searchPrompt, setSearchPrompt] = useState<string>("");
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const responsive = useResponsive("up", "lg");
-  const [userFavorites, setUserFavorites] = useState<Array<string>>([])
-  const [filterFavorites, setFilterFavorites] = useState<boolean>(false)
-  const { user } = useAuth0()
+  const [userFavorites, setUserFavorites] = useState<Array<string>>([]);
+  const [filterFavorites, setFilterFavorites] = useState<boolean>(false);
+  const { user } = useAuth0();
 
   const fetchRecipes = async () => {
     try {
@@ -118,10 +118,19 @@ const HomePage: FC<RecipesPageProps> = () => {
 
       setCategories(uniqueArray);
     } catch (error) {
-      if (Notification.permission === 'granted') {
+      // Če pride do napake, poskusimo naložiti recepte iz localStorage
+      const cachedRecipes = localStorage.getItem("GET:/recipes");
+      console.log("Cachani recepti: " + cachedRecipes);
+      if (cachedRecipes) {
+        console.log("Smo notri v funkciji if ki se izvede ocitno");
+        setRecipes(JSON.parse(cachedRecipes));
+        setFilteredRecipes(JSON.parse(cachedRecipes));
+      }
+
+      if (Notification.permission === "granted") {
         new Notification("Error fetching recipes", {
-          body: 'Fetching recipes failed. Please try again later.',
-          icon: '/icon-144.png'
+          body: "Fetching recipes failed. Please try again later.",
+          icon: "/icon-144.png",
         });
       }
       console.error("Error fetching recipes", error);
@@ -130,21 +139,29 @@ const HomePage: FC<RecipesPageProps> = () => {
 
   const fetchUserFavorites = async () => {
     try {
-      const response = await voiceChefApi.get(`/favorites/${user?.sub || ''}`);
+      const response = await voiceChefApi.get(`/favorites/${user?.sub || ""}`);
 
       if (response.data) {
         setUserFavorites(response.data.favorites);
       }
     } catch (error) {
-      console.error('Error fetching user favorites:', error);
+      console.error("Error fetching user favorites:", error);
     }
   };
 
   useEffect(() => {
-    if (user)
-      fetchUserFavorites()
-    fetchRecipes();
-  }, []);
+    if (user) fetchUserFavorites();
+    if (navigator.onLine) {
+      fetchRecipes();
+    } else {
+      // Ko je naprava offline, naložimo recepte iz localStorage
+      const cachedRecipes = localStorage.getItem("GET:/recipes");
+      if (cachedRecipes) {
+        setRecipes(JSON.parse(cachedRecipes));
+        setFilteredRecipes(JSON.parse(cachedRecipes));
+      }
+    }
+  }, [user]);
 
   const handleOnClickOnRecipe = (id: string) => {
     navigate(`/recipe/${id}`);
@@ -174,19 +191,19 @@ const HomePage: FC<RecipesPageProps> = () => {
       if (filterFavorites)
         tempFilteredArray = tempFilteredArray.filter((filteredRecipe: Recipe) =>
           userFavorites.includes(filteredRecipe._id)
-        )
+        );
 
       setFilteredRecipes(tempFilteredArray);
     }
   }, [selectedCategory, searchPrompt, filterFavorites]);
 
   const updateFavorites = (recipeId: string) => {
-    let tempUserFavorites = JSON.parse(JSON.stringify(userFavorites))
+    let tempUserFavorites = JSON.parse(JSON.stringify(userFavorites));
 
     const recipeIndex = tempUserFavorites.indexOf(recipeId);
 
-    console.log('recipeId', recipeId)
-    console.log('recipeIndex', recipeIndex)
+    console.log("recipeId", recipeId);
+    console.log("recipeIndex", recipeIndex);
 
     if (recipeIndex > -1) {
       tempUserFavorites.splice(recipeIndex, 1);
@@ -194,12 +211,12 @@ const HomePage: FC<RecipesPageProps> = () => {
       tempUserFavorites.push(recipeId);
     }
 
-    console.log('tempUserFavorites', tempUserFavorites)
+    console.log("tempUserFavorites", tempUserFavorites);
 
-    setUserFavorites(tempUserFavorites)
-  }
+    setUserFavorites(tempUserFavorites);
+  };
 
-  console.log('userFavorites', userFavorites)
+  console.log("userFavorites", userFavorites);
 
   return (
     <Grid
@@ -333,22 +350,31 @@ const HomePage: FC<RecipesPageProps> = () => {
               </FormControl>
             </Grid>
 
-            {user &&
+            {user && (
               <Grid item xs={responsive ? 1 : 12}>
                 <IconButton
-                  sx={{ marginRight: 2, padding: '5px', borderRadius: '50%', backgroundColor: '#1F1D2B' }}
-                  onClick={() => { setFilterFavorites(!filterFavorites) }}
+                  sx={{
+                    marginRight: 2,
+                    padding: "5px",
+                    borderRadius: "50%",
+                    backgroundColor: "#1F1D2B",
+                  }}
+                  onClick={() => {
+                    setFilterFavorites(!filterFavorites);
+                  }}
                 >
-                  {
-                    filterFavorites ?
-                      <StarRoundedIcon sx={{ fontSize: '35px', color: '#d17a22' }} />
-                      :
-                      <StarOutlineRoundedIcon sx={{ fontSize: '35px', color: '#d17a22' }} />
-                  }
-
+                  {filterFavorites ? (
+                    <StarRoundedIcon
+                      sx={{ fontSize: "35px", color: "#d17a22" }}
+                    />
+                  ) : (
+                    <StarOutlineRoundedIcon
+                      sx={{ fontSize: "35px", color: "#d17a22" }}
+                    />
+                  )}
                 </IconButton>
               </Grid>
-            }
+            )}
           </Grid>
         </Grid>
 
@@ -381,7 +407,11 @@ const HomePage: FC<RecipesPageProps> = () => {
                     }}
                     sx={{ cursor: "pointer" }}
                   >
-                    <RecipeDisplay recipe={recipe} isFavorited={userFavorites.includes(recipe._id)} updateFavoritesFromProps={updateFavorites} />
+                    <RecipeDisplay
+                      recipe={recipe}
+                      isFavorited={userFavorites.includes(recipe._id)}
+                      updateFavoritesFromProps={updateFavorites}
+                    />
                   </Grid>
                 );
               })}

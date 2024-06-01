@@ -81,6 +81,7 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
           justifyContent: 'center',
           alignItems: 'center',
           borderBottomRightRadius: '16px',
+          cursor: 'pointer'
         }}>
           <Grid item xs={12} sx={{
             padding: 1,
@@ -135,7 +136,8 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          borderBottomRightRadius: sortedStores.length === 0 ? '16px' : ''
+          borderBottomRightRadius: sortedStores.length === 0 ? '16px' : '',
+          cursor: 'pointer'
         }}>
           <Grid item xs={12} sx={{
             padding: 1,
@@ -191,7 +193,8 @@ const SideMenuShops: React.FC<SideMenuShopsProps> = ({ items, onStoreSelect, sel
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            borderBottomRightRadius: index === sortedStores.length - 1 ? '16px' : ''
+            borderBottomRightRadius: index === sortedStores.length - 1 ? '16px' : '',
+            cursor: 'pointer'
           }}>
             <Grid item xs={12} sx={{
               padding: 1,

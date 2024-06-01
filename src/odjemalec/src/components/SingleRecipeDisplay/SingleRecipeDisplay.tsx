@@ -82,6 +82,7 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe, isFavorited, update
       const time = extractTime(command);
       if (time) {
         setTimer(time);
+        speakText(`Timer set for ${time / 60000} minutes`)
       } else {
         console.log('Invalid time format');
       }
@@ -143,6 +144,7 @@ const SingleRecipeDisplay:FC<RecipeDisplayProps> = ({recipe, isFavorited, update
   const setTimer = (duration: number) => {
     console.log(`Timer set for ${duration / 60000} minutes`);
     setTimeout(() => {
+      speakText(`Your timer for ${duration / 60000} minutes has expired!`)
       if (Notification.permission === 'granted') {
         new Notification("Timer expired!", {
           body: `Your timer for ${duration / 60000} minutes has expired!`,

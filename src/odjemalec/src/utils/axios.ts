@@ -1,4 +1,8 @@
-import Axios from "axios";
+import Axios, {
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
 
 // Ustvarimo Axios instanco
 export const voiceChefApi = Axios.create({
@@ -17,29 +21,34 @@ const isOnline = () => {
 
 // Dodamo interceptor za dodajanje dostopnega žetona v glavo vsake zahteve
 voiceChefApi.interceptors.request.use(
-  async (config) => {
+  async (
+    config: InternalAxiosRequestConfig
+  ): Promise<InternalAxiosRequestConfig> => {
     const token = sessionStorage.getItem("accessToken");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-      console.log("Authorization header set:", config.headers.Authorization);
+      config.headers.set("Authorization", `Bearer ${token}`);
+      console.log(
+        "Authorization header set:",
+        config.headers.get("Authorization")
+      );
     }
 
     if (!isOnline()) {
       const url = config.url;
-      const method = config.method;
+      const method = config.method?.toUpperCase();
       const key = `${method}:${url}`;
       const cachedData = localStorage.getItem(key);
 
       if (cachedData) {
         console.log(`Using cached data for ${key}`);
-        return Promise.resolve({
+        return {
           ...config,
           data: JSON.parse(cachedData),
           headers: config.headers,
           status: 200,
           statusText: "OK",
           request: config,
-        });
+        } as unknown as InternalAxiosRequestConfig;
       }
     }
 
@@ -52,10 +61,10 @@ voiceChefApi.interceptors.request.use(
 
 // Dodamo interceptor za shranjevanje odgovorov API zahtev v localStorage
 voiceChefApi.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     if (isOnline()) {
       const url = response.config.url;
-      const method = response.config.method;
+      const method = response.config.method?.toUpperCase();
       const key = `${method}:${url}`;
 
       localStorage.setItem(key, JSON.stringify(response.data));

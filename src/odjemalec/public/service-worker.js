@@ -7,11 +7,11 @@ const urlsToCache = [
   "/manifest.json",
   "/logo192.png",
   "/logo512.png",
-  "/icon-72x72.png",
-  "/icon-128x128.png",
-  "/icon-144x144.png",
+  "/icon-72.png",
+  "/icon-128.png",
+  "/icon-144.png",
   "/icon-192.png",
-  "/icon-512x512.png",
+  "/icon-512.png",
   "/static/css/main.d27c5761.css", // Posodobite z dejanskim hashom
   "/static/js/453.01cb5c1c.chunk.js", // Posodobite z dejanskim hashom
   "/static/js/main.de974e35.js", // Posodobite z dejanskim hashom
@@ -56,35 +56,41 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  console.log("Fetch event for ", event.request.url);
+  //console.log("Fetch event for ", event.request.url);
   event.respondWith(
-    caches
-      .match(event.request)
-      .then((response) => {
-        if (response) {
-          console.log("Found ", event.request.url, " in cache");
-          return response;
-        }
-        console.log("Network request for ", event.request.url);
-        return fetch(event.request).catch(() => {
+    caches.match(event.request).then((response) => {
+      if (response) {
+        //console.log("Found ", event.request.url, " in cache");
+        return response;
+      }
+      //console.log("Network request for ", event.request.url);
+      return fetch(event.request)
+        .then((networkResponse) => {
+          // Check if the response is a redirect
+          if (networkResponse.type === "opaqueredirect") {
+            return Response.redirect(networkResponse.url);
+          }
+
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request.url, networkResponse.clone());
+            return networkResponse;
+          });
+        })
+        .catch(() => {
           return caches.match("/offline.html");
         });
-      })
-      .catch((error) => {
-        console.error("Error in fetch handler:", error);
-        return caches.match("/offline.html");
-      })
+    })
   );
 });
 
 self.addEventListener("push", function (event) {
-  console.log("push event v /public");
+  //console.log("push event v /public");
 
   const payload = event.data.json();
   const title = payload.title;
   const options = {
     body: payload.body,
-    icon: "./logo192.png",
+    icon: "./icon-128.png",
   };
 
   event.waitUntil(self.registration.showNotification(title, options));

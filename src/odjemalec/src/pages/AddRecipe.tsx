@@ -168,7 +168,7 @@ const AddRecipe: React.FC = () => {
     e.preventDefault();
     try {
       await voiceChefApi.post('/recipes', recipeData);
-      navigate('/');
+      navigate('/recipes');
     } catch (error) {
       if (Notification.permission === 'granted') {
         new Notification("Error adding recipe", {
