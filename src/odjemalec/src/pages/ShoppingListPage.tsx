@@ -30,20 +30,17 @@ const ShoppingListPage: React.FC = () => {
 
   const fetchItems = async () => {
     try {
-      if (navigator.onLine) {
-        const result = await voiceChefApi.get(`/items/${user?.sub}`);
-        setItems(result.data);
-        localStorage.setItem('items', JSON.stringify(result.data));
-      } else {
-        setItems(JSON.parse(localStorage.getItem('items') || '[]'));
-      }
-    } catch (error) {
+      const result = await voiceChefApi.get(`/items/${user?.sub}`);
+      setItems(result.data);
+      localStorage.setItem('items', JSON.stringify(result.data));
+      setItems(JSON.parse(localStorage.getItem('items') || '[]'));
       if (Notification.permission === 'granted') {
         new Notification("Error fetching shopping list", {
           body: 'Fetching shopping list failed. Please try again later.',
           icon: '/icon-144.png'
         });
       }
+    } catch (error){
       console.error('Error fetching shopping list', error);
     }
   };
@@ -120,27 +117,6 @@ const ShoppingListPage: React.FC = () => {
     }
   };
 
-  const syncOfflineItems = async () => {
-    if (navigator.onLine) {
-      const offlineItems = JSON.parse(localStorage.getItem('offlineItems') || '[]');
-      if (offlineItems.length > 0) {
-        try {
-          for (const item of offlineItems) {
-            await voiceChefApi.post('/items', item);
-          }
-          localStorage.removeItem('items');
-          localStorage.removeItem('offlineItems');
-          console.log('Offline items synced successfully');
-          fetchItems();
-        } catch (error) {
-          console.error('Error syncing offline items', error);
-        }
-      }
-    } else {
-      setItems(JSON.parse(localStorage.getItem('items') || '[]'));
-    }
-  };
-
   const handleDeleteItem = useCallback(async (id: string) => {
     try {
       if (navigator.onLine) {
@@ -152,7 +128,6 @@ const ShoppingListPage: React.FC = () => {
           return updatedItems;
         });
 
-        // Notify user of successful deletion if permission is granted
         if (Notification.permission === 'granted') {
           new Notification("Item deleted", {
             body: 'The item was successfully deleted.',
@@ -160,7 +135,6 @@ const ShoppingListPage: React.FC = () => {
           });
         }
       } else {
-        // Queue the deletion for later synchronization
         const pendingDeletions = JSON.parse(localStorage.getItem('pendingDeletions') || '[]');
         pendingDeletions.push(id);
         localStorage.setItem('pendingDeletions', JSON.stringify(pendingDeletions));
@@ -171,7 +145,6 @@ const ShoppingListPage: React.FC = () => {
           return updatedItems;
         });
 
-        // Notify user of offline deletion
         if (Notification.permission === 'granted') {
           new Notification("Item deleted locally", {
             body: 'You are offline. Item will be deleted from the server when you are back online.',
@@ -190,54 +163,16 @@ const ShoppingListPage: React.FC = () => {
     }
   }, []);
 
-  const synchronizePendingDeletions = async () => {
-    if (navigator.onLine) {
-      const pendingDeletionsString = localStorage.getItem('pendingDeletions');
-      if (!pendingDeletionsString) return;
-
-      const pendingDeletions = JSON.parse(pendingDeletionsString);
-      for (const id of pendingDeletions) {
-        try {
-          // Add logging to inspect the request payload
-          console.log(`Attempting to delete item with ID: ${id}`);
-
-          const response = await voiceChefApi.delete(`/items/${id}`);
-
-          // Log the server's response
-          console.log(`Server response for deletion of item ${id}:`, response);
-        } catch (error) {
-          // Log the error details
-          console.error(`Error synchronizing deletion for item ${id}`, error);
-        }
-      }
-      // Clear pending deletions after synchronization
-      localStorage.removeItem('pendingDeletions');
-    }
-  };
-
-  // Use the updated function in the useEffect hook
-  useEffect(() => {
-    window.addEventListener('online', synchronizePendingDeletions);
-    window.addEventListener('online', syncOfflineItems);
-    fetchItems();
-    return () => {
-      window.removeEventListener('online', synchronizePendingDeletions);
-      window.removeEventListener('online', syncOfflineItems);
-    };
-  }, []);
-
   const handleEditItem = async (id: string) => {
     try {
-      // Perform the update request to backend with edited data
-      await voiceChefApi.put(`/items/${id}`, {
-        userId: user?.sub,
-        item: editItemName,
-        quantity: editItemQuantity,
-        unit: editItemUnit,
-        store: editItemStore
-      });
-
       if (navigator.onLine) {
+        await voiceChefApi.put(`/items/${id}`, {
+          userId: user?.sub,
+          item: editItemName,
+          quantity: editItemQuantity,
+          unit: editItemUnit,
+          store: editItemStore
+        });
         setItems(prevItems => {
           const updatedItems = prevItems.map(item => {
             if (item._id === id) {
@@ -251,8 +186,6 @@ const ShoppingListPage: React.FC = () => {
             }
             return item;
           });
-          localStorage.setItem('offlineItems', JSON.stringify(updatedItems));
-          localStorage.setItem('items', JSON.stringify(updatedItems));
           return updatedItems;
         });
 
@@ -262,9 +195,38 @@ const ShoppingListPage: React.FC = () => {
         setEditItemQuantity(0);
         setEditItemUnit('');
         setEditItemStore('');
+      } else {
+        let offlineEdits = JSON.parse(localStorage.getItem('offlineEditesItems') || '[]');
+        offlineEdits.push({
+          id, data: {
+            item: editItemName,
+            quantity: editItemQuantity,
+            unit: editItemUnit,
+            store: editItemStore
+          }
+        });
+        const updatedItems = items.map(item => {
+          if (item._id === id) {
+            return {
+              ...item,
+              item: editItemName,
+              quantity: editItemQuantity,
+              unit: editItemUnit,
+              store: editItemStore
+            };
+          }
+          return item;
+        });
+        setItems(updatedItems);
 
-        // Synchronize pending deletions after successful edit
-        await synchronizePendingDeletions();
+        localStorage.setItem('offlineEditesItems', JSON.stringify(offlineEdits));
+
+        console.log("Item edit saved locally.")
+        setEditItemId(null);
+        setEditItemName('');
+        setEditItemQuantity(0);
+        setEditItemUnit('');
+        setEditItemStore('');
       }
     } catch (error) {
       console.error('Error updating item', error);
@@ -277,6 +239,87 @@ const ShoppingListPage: React.FC = () => {
     }
   };
 
+  const syncOfflineItems = async () => {
+    if (navigator.onLine) {
+      const offlineItems = JSON.parse(localStorage.getItem('offlineItems') || '[]');
+      if (offlineItems.length > 0) {
+        try {
+          for (const item of offlineItems) {
+            await voiceChefApi.post('/items', item);
+          }
+          localStorage.removeItem('offlineItems');
+          console.log('Offline items synced successfully');
+          fetchItems();
+        } catch (error) {
+          if (Notification.permission === 'granted') {
+            new Notification("Error syncing edits", {
+              body: 'Syncing edits failed. Please try again later.',
+              icon: '/icon-144.png'
+            });
+          }
+          console.error('Error syncing offline items', error);
+        }
+      }
+    } else {
+      setItems(JSON.parse(localStorage.getItem('items') || '[]'));
+    }
+  };
+
+  const synchronizePendingDeletions = async () => {
+    if (navigator.onLine) {
+      const pendingDeletionsString = localStorage.getItem('pendingDeletions');
+      if (!pendingDeletionsString) return;
+
+      const pendingDeletions = JSON.parse(pendingDeletionsString);
+      for (const id of pendingDeletions) {
+        try {
+          await voiceChefApi.delete(`/items/${id}`);
+        } catch (error) {
+          if (Notification.permission === 'granted') {
+            new Notification("Error syncing edits", {
+              body: 'Syncing edits failed. Please try again later.',
+              icon: '/icon-144.png'
+            });
+          }
+          console.error(`Error synchronizing deletion for item ${id}`, error);
+        }
+      }
+      localStorage.removeItem('pendingDeletions');
+    }
+  };
+
+  const syncOfflineEdits = async () => {
+    if (navigator.onLine) {
+      const offlineEdits = JSON.parse(localStorage.getItem('offlineEditesItems') || '[]');
+      for (const edit of offlineEdits) {
+        try {
+          await voiceChefApi.put(`/items/${edit.id}`, edit.data);
+          fetchItems();
+        } catch (error) {
+          if (Notification.permission === 'granted') {
+            new Notification("Error syncing edits", {
+              body: 'Syncing edits failed. Please try again later.',
+              icon: '/icon-144.png'
+            });
+          }
+          console.error('Error syncing edit', error);
+        }
+      }
+      localStorage.removeItem('offlineEditesItems');
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('online', syncOfflineItems);
+    window.addEventListener('online', synchronizePendingDeletions);
+    window.addEventListener('online', syncOfflineEdits);
+    fetchItems();
+    return () => {
+      window.removeEventListener('online', syncOfflineItems);
+      window.removeEventListener('online', synchronizePendingDeletions);
+      window.addEventListener('online', syncOfflineEdits);
+    };
+  }, []);
 
   const handleStartEditing = (item: Item) => {
     setEditItemId(item._id);
