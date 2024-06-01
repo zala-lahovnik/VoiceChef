@@ -90,7 +90,7 @@ self.addEventListener("push", function (event) {
   const title = payload.title;
   const options = {
     body: payload.body,
-    icon: "./logo192.png",
+    icon: "./icon-128.png",
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
