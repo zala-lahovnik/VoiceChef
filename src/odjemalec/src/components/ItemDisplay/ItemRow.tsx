@@ -2,13 +2,9 @@ import React, { useState } from 'react';
 import {
   TableCell,
   TableRow,
-  TextField,
   Typography,
-  Button,
   IconButton,
   Checkbox,
-  InputLabel,
-  Select,
   MenuItem,
   FormControl,
   Grid,
@@ -27,18 +23,18 @@ interface ItemRowProps {
   editItemName: string;
   editItemQuantity: number;
   editItemUnit: string;
-  editItemStore: string; // New prop for edited store
-  isChecked: boolean; // Add isChecked prop
+  editItemStore: string;
+  isChecked: boolean;
   setEditItemName: (name: string) => void;
   setEditItemQuantity: (quantity: number) => void;
   setEditItemUnit: (unit: string) => void;
-  setEditItemStore: (store: string) => void; // Function to set edited store
+  setEditItemStore: (store: string) => void;
   handleEditItem: (id: string) => void;
   handleDeleteItem: (id: string) => void;
   handleStartEditing: (item: Item) => void;
   handleCancelEditing: () => void;
   isEditing: (id: string) => boolean;
-  toggleCheck: () => void; // Function to toggle checkbox
+  toggleCheck: () => void;
 }
 
 const ItemRow: React.FC<ItemRowProps> = ({
@@ -64,8 +60,8 @@ const ItemRow: React.FC<ItemRowProps> = ({
   const [isStrikethrough, setIsStrikethrough] = useState(false);
 
   const handleCheckboxClick = () => {
-    setIsStrikethrough(!isStrikethrough); // Toggle strike-through state
-    toggleCheck(); // Toggle checkbox state
+    setIsStrikethrough(!isStrikethrough);
+    toggleCheck();
   };
 
   const canEditStore = item.store === 'Uncategorized' || !selectedStore;
@@ -172,7 +168,7 @@ const ItemRow: React.FC<ItemRowProps> = ({
                 onChange={(e) => setEditItemStore(e.target.value as string)}
                 fullWidth
                 label="Store"
-                disabled={!canEditStore} // Disable if cannot edit store
+                disabled={!canEditStore}
                 sx={{
                   color: 'white',
                   '& .MuiInputLabel-root': { color: 'white' }

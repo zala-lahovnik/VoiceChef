@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableContainer, TableRow, Paper, Typography, TextField, Button } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableContainer, TableRow, Paper, Typography } from "@mui/material";
 import ItemRow from './ItemRow';
 import { Item } from "../../utils/itemTypes";
 import {StyledTextField} from "../../pages/HomePage";
@@ -13,14 +13,14 @@ interface ItemTableProps {
     editItemName: string;
     editItemQuantity: number;
     editItemUnit: string;
-    editItemStore: string; // New state for edited store
+    editItemStore: string;
     newItemName: string;
     newItemQuantity: number;
     newItemUnit: string;
     setEditItemName: (name: string) => void;
     setEditItemQuantity: (quantity: number) => void;
     setEditItemUnit: (unit: string) => void;
-    setEditItemStore: (store: string) => void; // Function to set edited store
+    setEditItemStore: (store: string) => void;
     setNewItemName: (name: string) => void;
     setNewItemQuantity: (quantity: number) => void;
     setNewItemUnit: (unit: string) => void;
@@ -29,7 +29,7 @@ interface ItemTableProps {
     handleStartEditing: (item: Item) => void;
     handleCancelEditing: () => void;
     handleAddNewItem: () => void;
-    handleStartStoreEditing: (item: Item) => void; // Function to start editing store
+    handleStartStoreEditing: (item: Item) => void;
     isEditing: (id: string) => boolean;
 }
 
@@ -59,10 +59,8 @@ const ItemTable: React.FC<ItemTableProps> = ({
     handleStartStoreEditing,
     isEditing,
 }) => {
-    // State to manage checked items
     const [checkedItems, setCheckedItems] = useState<string[]>([]);
 
-    // Function to toggle checked state of an item
     const toggleCheck = (itemId: string) => {
         if (checkedItems.includes(itemId)) {
             setCheckedItems(checkedItems.filter(id => id !== itemId));
@@ -71,7 +69,6 @@ const ItemTable: React.FC<ItemTableProps> = ({
         }
     };
 
-    // Render Add New Item section only if selectedStore is null
     const renderAddNewItemSection = selectedStore !== 'Uncategorized' && (
         <>
             <Typography sx={{ fontSize: '24px', padding: 1, marginBottom: 1, textAlign: 'center', color: '#fff' }}>
@@ -184,27 +181,27 @@ const ItemTable: React.FC<ItemTableProps> = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items.map((item) => (
+                        {items.map((item, index) => (
                             <ItemRow
-                                key={item._id}
+                                key={index}
                                 item={item}
                                 selectedStore={selectedStore}
                                 editItemId={editItemId}
                                 editItemName={editItemName}
                                 editItemQuantity={editItemQuantity}
                                 editItemUnit={editItemUnit}
-                                editItemStore={editItemStore} // Pass edited store name
+                                editItemStore={editItemStore}
                                 setEditItemName={setEditItemName}
                                 setEditItemQuantity={setEditItemQuantity}
                                 setEditItemUnit={setEditItemUnit}
-                                setEditItemStore={setEditItemStore} // Pass setter for edited store name
+                                setEditItemStore={setEditItemStore}
                                 handleEditItem={handleEditItem}
                                 handleDeleteItem={handleDeleteItem}
                                 handleStartEditing={handleStartEditing}
                                 handleCancelEditing={handleCancelEditing}
                                 isEditing={isEditing}
-                                isChecked={checkedItems.includes(item._id)} // Pass isChecked state
-                                toggleCheck={() => toggleCheck(item._id)} // Pass toggleCheck function
+                                isChecked={checkedItems.includes(item._id)}
+                                toggleCheck={() => toggleCheck(item._id)}
                             />
                         ))}
                     </TableBody>
