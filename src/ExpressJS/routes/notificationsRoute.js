@@ -63,7 +63,9 @@ router.get('/vapid-public-key', (req, res) => res.send({ publicKey: vapidPublicK
 
 router.post('/subscribe', (req, res) => {
     try {
-        const subscriptionData = req.body.body.subscription;
+        const body = JSON.parse(req.body.body)
+
+        const subscriptionData = body.subscription;
 
         subscriptions.push(subscriptionData);
 
