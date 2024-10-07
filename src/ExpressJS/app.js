@@ -34,12 +34,12 @@ const config = {
 connectDB();
 
 // Nastavitve CORS
-const corsOptions = {
-  origin: process.env.CORS_URL,
-  optionsSuccessStatus: 200,
-};
+// const corsOptions = {
+//   origin: process.env.CORS_URL,
+//   optionsSuccessStatus: 200,
+// };
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 /*
