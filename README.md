@@ -171,3 +171,24 @@ npm start
 By following these steps, you'll have the frontend for Voice Chef up and running smoothly! 🌟✨
 
 ---
+
+## 🍽️ Setting up the MongoDB for Voice Chef
+
+To get started with Voice Chef, you'll need to set up a MongoDB database with the following structure. 
+Follow the steps below to create the necessary collections.
+
+1. Create the Database 🗄️
+   Open your MongoDB shell or client (such as MongoDB Compass).
+   Create a new database called `voice_chef`.
+2. Add the Required Collections 📂
+   Once you're inside the `voice_chef` database, create the following collections:
+
+- **❤️ favorites** - This collection will store users' favorite recipes or items.
+
+- **🛒 items** - This collection will hold all available ingredients or items related to recipes.
+
+- **🍲 recipes** - Stores detailed information about each recipe (e.g., title, ingredients, steps).
+
+- **🛍️ shoppinglistitems** - Contains the items in a user's shopping list.
+
+- **👥 users** - Keeps user profiles and associated preferences, including any authentication details.
