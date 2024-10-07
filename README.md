@@ -53,6 +53,12 @@ VAPID_PUBLIC_KEY=<VAPID_PUBLIC_KEY_VALUE>
 VAPID_PRIVATE_KEY=<VAPID_PRIVATE_KEY_VALUE>
 ```
 
+`AUTH0_DOMAIN`, `AUTH0_AUDIENCE`, `SECRET`, `CLIENT_ID`, `ISSUER_BASE_URL` can all be obtained by creating a project
+[here](). `PORT` is the port where you want the backend to run. `BASE_URL` is where your backend will be available. While 
+developing locally this will be `http://localhost:5000`. `MONGODB_URI` is the connection string to your MongoDB database.
+`MAILTO_ADDRESS` is an email address to provide push notifications, in the following form: `mailto:<EMAIL_ADDRESS>`.
+`VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` are keys that can be generated using [Node](https://gabrieleromanato.name/how-to-generate-vapid-keys-with-nodejs).
+
 ## Start the Server
 Once the dependencies are installed and your environment variables are configured, start the server:
 
@@ -138,6 +144,12 @@ PUBLIC_URL=<PUBLIC_URL_VALUE>
 
 BASE_URL=<BASE_URL_VALUE>
 ```
+
+`REACT_APP_AUTH0_DOMAIN`, `REACT_APP_AUTH0_CLIENT_ID`, `REACT_APP_AUTH0_AUDIENCE` are the same as the backend values.
+`PUBLIC_URL` and `BASE_URL` are the URL where your frontend will live. While developing, this will be `http://localhost:3000`.
+`REACT_APP_BACKEND_API_URL` is the URL where your backend is available. While developing, this will be `http://localhost:5000`, 
+unless the port value was changed.
+
 
 3. **Start the Development Server**
 
