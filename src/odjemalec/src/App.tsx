@@ -51,7 +51,7 @@ const App: React.FC = () => {
       try {
         const token = sessionStorage.getItem('accessToken');
         if (token && user) {
-          await axios.post('http://localhost:5000/auth/register', {}, {
+          await voiceChefApi.post('/auth/register', {}, {
             headers: {
               Authorization: `Bearer ${token}`
             }
