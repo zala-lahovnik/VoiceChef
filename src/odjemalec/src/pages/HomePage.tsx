@@ -85,8 +85,8 @@ const HomePage: FC<RecipesPageProps> = () => {
   const [categories, setCategories] = useState<Array<string>>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("--");
   const navigate = useNavigate();
-  const [filteredRecipes, setFilteredRecipes] = useState<Array<Recipe> | null>(
-    null
+  const [filteredRecipes, setFilteredRecipes] = useState<Array<Recipe>>(
+    []
   );
   const [searchPrompt, setSearchPrompt] = useState<string>("");
   const [openMenu, setOpenMenu] = useState<boolean>(false);
@@ -124,7 +124,7 @@ const HomePage: FC<RecipesPageProps> = () => {
       if (cachedRecipes) {
         console.log("Smo notri v funkciji if ki se izvede ocitno");
         setRecipes(JSON.parse(cachedRecipes));
-        setFilteredRecipes(JSON.parse(cachedRecipes));
+        setFilteredRecipes(JSON.parse(cachedRecipes) || null);
       }
 
       if (Notification.permission === "granted") {
@@ -158,7 +158,9 @@ const HomePage: FC<RecipesPageProps> = () => {
       const cachedRecipes = localStorage.getItem("GET:/recipes");
       if (cachedRecipes) {
         setRecipes(JSON.parse(cachedRecipes));
-        setFilteredRecipes(JSON.parse(cachedRecipes));
+        setFilteredRecipes(JSON.parse(cachedRecipes) || []);
+      } else {
+        setFilteredRecipes([]);
       }
     }
   }, [user]);
@@ -392,7 +394,7 @@ const HomePage: FC<RecipesPageProps> = () => {
               paddingTop: "150px",
             }}
           >
-            {filteredRecipes &&
+            {Array.isArray(filteredRecipes) && filteredRecipes.length > 0  &&
               filteredRecipes.map((recipe) => {
                 return (
                   <Grid
