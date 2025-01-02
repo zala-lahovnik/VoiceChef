@@ -85,6 +85,13 @@ const AddRecipe: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth0(); // Get the logged-in user
 
+    useEffect(() => {
+    // Sproži dogodek za Hotjar, ko se stran naloži
+    if (window.hj) {
+      window.hj('event', 'AB_checkout_Dec21_control');
+    }
+  }, []);
+  
   const [recipeData, setRecipeData] = useState<RecipeData>({
     userId: user?.sub || '', // Initialize with user ID if available
     title: '',
