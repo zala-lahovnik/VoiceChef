@@ -86,7 +86,7 @@ const AddRecipeB: React.FC = () => {
   const { user } = useAuth0(); // Get the logged-in user
 
   useEffect(() => {
-    // Sproži dogodek za Hotjar, ko se stran naloži
+    //@ts-ignore
     if (window.hj) {
       window.hj('event', 'AB_checkout_Dec21_variant');
     }
