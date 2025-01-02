@@ -85,12 +85,6 @@ const AddRecipeB: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth0(); // Get the logged-in user
 
-  useEffect(() => {
-    //@ts-ignore
-    if (window.hj) {
-      window.hj('event', 'AB_checkout_Dec21_variant');
-    }
-  }, []);
   const [recipeData, setRecipeData] = useState<RecipeData>({
     userId: user?.sub || '', // Initialize with user ID if available
     title: '',
