@@ -45,6 +45,15 @@
         ".js",
         5225277
       );
+      // Stran A - Control
+      if (window.location.pathname === '/add-recipe') {
+          hj('event', 'AB_checkout_Dec21_control');
+      }
+      
+      // Stran B - Variant
+      if (window.location.pathname === '/add-recipe-B') {
+          hj('event', 'AB_checkout_Dec21_variant');
+      }
     </script>
   </head>
   <body>
