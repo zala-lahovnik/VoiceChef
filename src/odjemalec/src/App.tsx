@@ -13,6 +13,7 @@ import PickAndChoosePage from "./pages/PickAndChoosePage";
 import { initKeyboardShortcuts, cleanupKeyboardShortcuts } from './keyboard-shortcuts';
 import voiceChefApi from "./utils/axios";
 import AddRecipeB from "./pages/AddRecipe-B";
+import HomePageB from './pages/HomePage-B';
 
 const App: React.FC = () => {
   const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
@@ -101,6 +102,7 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/home-B" element={<HomePageB />} />
         <Route path="/recipe/:id" element={<SingleRecipePage />} />
         <Route path="/recipes" element={<RecipesPage />} />
         <Route path="/shopping-list" element={<ShoppingListPage />} />
